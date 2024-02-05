@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "ts:check": "tsc"
   },
   "dependencies": {
     "expo": "~50.0.5",
@@ -18,9 +19,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/react": "~18.2.45",
     "eslint": "^8.56.0",
     "eslint-config-universe": "^12.0.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
   },
   "private": true,
   "engines": {
