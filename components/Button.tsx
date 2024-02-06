@@ -50,10 +50,8 @@ const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
   },
   pressed: {
     opacity: 0.75,
