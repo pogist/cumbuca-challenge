@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    margin: 6,
+    marginBottom: 8,
+    marginHorizontal: 10,
   },
   errorLabel: {
     color: 'red',
@@ -54,7 +55,8 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 10,
     fontWeight: '500',
-    margin: 6,
+    marginTop: 4,
+    marginHorizontal: 10,
   },
 });
 
