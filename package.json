@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package.json",
   "name": "cumbuca-challenge",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -14,15 +14,23 @@
   "dependencies": {
     "expo": "~50.0.5",
     "expo-build-properties": "~0.11.1",
+    "expo-constants": "~15.4.5",
     "expo-dev-client": "~3.3.8",
+    "expo-linking": "~6.2.2",
+    "expo-router": "~3.4.7",
     "expo-status-bar": "~1.11.1",
     "expo-system-ui": "~2.9.3",
     "react": "18.2.0",
-    "react-native": "0.73.2"
+    "react-dom": "18.2.0",
+    "react-native": "0.73.2",
+    "react-native-safe-area-context": "4.8.2",
+    "react-native-screens": "~3.29.0",
+    "react-native-web": "~0.19.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
+    "@types/react-dom": "^18",
     "eslint": "^8.56.0",
     "eslint-config-universe": "^12.0.0",
     "prettier": "^3.2.5",

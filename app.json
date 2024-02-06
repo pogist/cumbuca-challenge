@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "cumbucachallenge",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -24,6 +25,8 @@
       "package": "io.github.pogist.cumbucachallenge"
     },
     "web": {
+      "bundler": "metro",
+      "output": "static",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
@@ -37,7 +40,11 @@
             "newArchEnabled": true
           }
         }
-      ]
-    ]
+      ],
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }

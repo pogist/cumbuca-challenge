@@ -25,6 +25,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:scheme="cumbucachallenge"/>
         <data android:scheme="io.github.pogist.cumbucachallenge"/>
         <data android:scheme="exp+cumbuca-challenge"/>
       </intent-filter>
