@@ -2,38 +2,56 @@ import Button from '@components/Button';
 import TextField from '@components/TextField';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { makeThemedStyles, useTheme } from '@theme';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 export default function Register() {
   const theme = useTheme();
   const styles = themedStyles(theme);
   const headerHeight = useHeaderHeight();
   return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.form}
-        keyboardVerticalOffset={headerHeight + 12}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <TextField label="CPF" placeholder="Ex.: 000.000.000-00" error={null} />
-        <TextField
-          label="Senha"
-          placeholder="Digite sua senha..."
-          error={null}
-        />
-        <TextField
-          label="Repetir senha"
-          placeholder="Repita sua senha..."
-          error={null}
-        />
-      </KeyboardAvoidingView>
-      <View style={styles.footer}>
-        <Button
-          label="CRIAR CONTA"
-          labelStyle={styles.registerLabel}
-          containerStyle={styles.registerContainer}
-        />
+    <ScrollView
+      bounces={false}
+      contentContainerStyle={styles.scrollViewContent}
+      keyboardShouldPersistTaps="handled">
+      <View style={styles.container}>
+        <KeyboardAvoidingView
+          style={styles.form}
+          keyboardVerticalOffset={headerHeight + 12}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <TextField
+            label="CPF"
+            error={null}
+            placeholder="Ex.: 000.000.000-00"
+            keyboardType="number-pad"
+          />
+          <TextField
+            label="Senha"
+            error={null}
+            placeholder="Digite sua senha..."
+            secureTextEntry
+          />
+          <TextField
+            label="Repetir senha"
+            error={null}
+            placeholder="Repita sua senha..."
+            secureTextEntry
+          />
+        </KeyboardAvoidingView>
+        <View style={styles.footer}>
+          <Button
+            label="CRIAR CONTA"
+            labelStyle={styles.registerLabel}
+            containerStyle={styles.registerContainer}
+          />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -65,6 +83,9 @@ const themedStyles = makeThemedStyles((theme) =>
       borderRadius: 10,
       alignSelf: 'stretch',
       backgroundColor: theme.colors.primary,
+    },
+    scrollViewContent: {
+      flexGrow: 1,
     },
   }),
 );

@@ -6,6 +6,7 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -18,31 +19,42 @@ export default function Login() {
     router.push('/auth/register');
   }, []);
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Login</Text>
-      <KeyboardAvoidingView
-        style={styles.form}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <TextField label="CPF" placeholder="Ex.: 000.000.000-00" error={null} />
-        <TextField
-          label="Senha"
-          placeholder="Digite sua senha..."
-          error={null}
-        />
-      </KeyboardAvoidingView>
-      <View style={styles.footer}>
-        <Button
-          label="LOGIN"
-          labelStyle={styles.loginLabel}
-          containerStyle={styles.loginContainer}
-        />
-        <Button
-          label="Criar conta"
-          onPress={gotoRegister}
-          labelStyle={styles.registerLabel}
-        />
+    <ScrollView
+      bounces={false}
+      contentContainerStyle={styles.scrollViewContent}
+      keyboardShouldPersistTaps="handled">
+      <View style={styles.container}>
+        <Text style={styles.header}>Login</Text>
+        <KeyboardAvoidingView
+          style={styles.form}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <TextField
+            label="CPF"
+            error={null}
+            placeholder="Ex.: 000.000.000-00"
+            keyboardType="number-pad"
+          />
+          <TextField
+            label="Senha"
+            error={null}
+            placeholder="Digite sua senha..."
+            secureTextEntry
+          />
+        </KeyboardAvoidingView>
+        <View style={styles.footer}>
+          <Button
+            label="LOGIN"
+            labelStyle={styles.loginLabel}
+            containerStyle={styles.loginContainer}
+          />
+          <Button
+            label="Criar conta"
+            onPress={gotoRegister}
+            labelStyle={styles.registerLabel}
+          />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -83,6 +95,9 @@ const themedStyles = makeThemedStyles((theme) =>
     },
     registerLabel: {
       color: theme.colors.primary,
+    },
+    scrollViewContent: {
+      flexGrow: 1,
     },
   }),
 );
