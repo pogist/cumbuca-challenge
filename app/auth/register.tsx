@@ -9,11 +9,11 @@ export default function Register() {
   const styles = themedStyles(theme);
   const headerHeight = useHeaderHeight();
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      keyboardVerticalOffset={headerHeight}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={styles.form}>
+    <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.form}
+        keyboardVerticalOffset={headerHeight + 12}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TextField label="CPF" placeholder="Ex.: 000.000.000-00" error={null} />
         <TextField
           label="Senha"
@@ -25,7 +25,7 @@ export default function Register() {
           placeholder="Repita sua senha..."
           error={null}
         />
-      </View>
+      </KeyboardAvoidingView>
       <View style={styles.footer}>
         <Button
           label="CRIAR CONTA"
@@ -33,7 +33,7 @@ export default function Register() {
           containerStyle={styles.registerContainer}
         />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 

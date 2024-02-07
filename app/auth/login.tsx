@@ -18,18 +18,18 @@ export default function Login() {
     router.push('/auth/register');
   }, []);
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <View style={styles.container}>
       <Text style={styles.header}>Login</Text>
-      <View style={styles.form}>
+      <KeyboardAvoidingView
+        style={styles.form}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TextField label="CPF" placeholder="Ex.: 000.000.000-00" error={null} />
         <TextField
           label="Senha"
           placeholder="Digite sua senha..."
           error={null}
         />
-      </View>
+      </KeyboardAvoidingView>
       <View style={styles.footer}>
         <Button
           label="LOGIN"
@@ -42,7 +42,7 @@ export default function Login() {
           labelStyle={styles.registerLabel}
         />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
