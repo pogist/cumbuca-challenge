@@ -1,6 +1,6 @@
 import Button from '@components/Button';
 import TextField from '@components/TextField';
-import { createThemedStyle, useTheme } from '@theme';
+import { makeThemedStyles, useTheme } from '@theme';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -30,7 +30,7 @@ export default function Login() {
   );
 }
 
-const themedStyles = createThemedStyle((theme) =>
+const themedStyles = makeThemedStyles((theme) =>
   StyleSheet.create({
     container: {
       padding: 20,

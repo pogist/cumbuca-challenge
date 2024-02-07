@@ -1,4 +1,4 @@
-import { useTheme, createThemedStyle } from '@theme';
+import { makeThemedStyles, useTheme } from '@theme';
 import React from 'react';
 import {
   StyleSheet,
@@ -40,7 +40,7 @@ const TextField: React.FC<TextFieldProps> = ({
   );
 };
 
-const themedStyles = createThemedStyle((theme) =>
+const themedStyles = makeThemedStyles((theme) =>
   StyleSheet.create({
     input: {
       borderColor: theme.colors.border,

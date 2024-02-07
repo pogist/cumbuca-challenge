@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 
 import { Theme } from './types';
 
-export default function createThemedStyle<
+export default function makeThemedStyles<
   T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>,
->(themedStyleCreator: (theme: Theme) => T) {
-  return themedStyleCreator;
+>(themedStylesMaker: (theme: Theme) => T) {
+  return themedStylesMaker;
 }

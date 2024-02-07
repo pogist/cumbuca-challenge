@@ -1,4 +1,4 @@
-import { createThemedStyle, useTheme } from '@theme';
+import { makeThemedStyles, useTheme } from '@theme';
 import { Slot } from 'expo-router';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
@@ -14,7 +14,7 @@ export default function AuthLayout() {
   );
 }
 
-const themedStyles = createThemedStyle((theme) =>
+const themedStyles = makeThemedStyles((theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
