@@ -1,6 +1,8 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
+import { minLength, useFormReducer } from '@form';
 import { makeThemedStyles, useTheme } from '@theme';
+import { isEmpty } from '@util';
 import { router } from 'expo-router';
 import React from 'react';
 import {
@@ -15,9 +17,37 @@ import {
 export default function Login() {
   const theme = useTheme();
   const styles = themedStyles(theme);
-  const gotoRegister = React.useCallback(() => {
+
+  const [formState, dispatch] = useFormReducer({
+    cpf: {
+      value: '',
+      rules: [],
+    },
+    password: {
+      value: '',
+      rules: [
+        {
+          validate: minLength(8),
+          errorMessage: 'Mínimo de 8 dígitos',
+        },
+      ],
+    },
+  });
+
+  const shouldDisableLogin =
+    isEmpty(formState.cpf.value) ||
+    isEmpty(formState.password.value) ||
+    !formState.cpf.isValid ||
+    !formState.password.isValid;
+
+  function onCreateAccountPress() {
     router.push('/auth/register');
-  }, []);
+  }
+
+  function onLoginPress() {
+    console.log(JSON.stringify(formState, null, 2));
+  }
+
   return (
     <ScrollView
       bounces={false}
@@ -29,14 +59,19 @@ export default function Login() {
           style={styles.form}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
+            value={formState.cpf.value}
+            error={formState.cpf.error}
+            onChangeText={(value) => dispatch({ field: 'cpf', value })}
             label="CPF"
-            error=""
             placeholder="Ex.: 000.000.000-00"
             keyboardType="number-pad"
+            maxLength={11}
           />
           <Input
+            value={formState.password.value}
+            error={formState.password.error}
+            onChangeText={(value) => dispatch({ field: 'password', value })}
             label="Senha"
-            error=""
             placeholder="Digite sua senha..."
             secureTextEntry
           />
@@ -44,12 +79,14 @@ export default function Login() {
         <View style={styles.footer}>
           <Button
             label="LOGIN"
+            onPress={onLoginPress}
+            disabled={shouldDisableLogin}
             labelStyle={styles.loginLabel}
             containerStyle={styles.loginContainer}
           />
           <Button
             label="Criar conta"
-            onPress={gotoRegister}
+            onPress={onCreateAccountPress}
             labelStyle={styles.registerLabel}
           />
         </View>

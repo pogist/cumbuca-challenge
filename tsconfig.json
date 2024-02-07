@@ -16,6 +16,9 @@
       ],
       "@util": [
         "util/index"
+      ],
+      "@form": [
+        "form/index"
       ]
     }
   },

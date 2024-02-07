@@ -1,5 +1,5 @@
 import { useTheme, makeThemedStyles } from '@theme';
-import { isEmpty } from '@util';
+import { isEmpty, useIsFirstRender } from '@util';
 import React from 'react';
 import {
   StyleProp,
@@ -33,38 +33,43 @@ export interface InputProps extends TextInputProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-const Input: React.FC<InputProps> = ({
-  label,
-  error,
-  style,
-  containerStyle,
-  ...props
-}) => {
-  const theme = useTheme();
-  const styles = themedStyles(theme);
-
-  const textLabelStyle: StyleProp<TextStyle> = [styles.textLabel];
-  const textInputStyle = !style
-    ? [styles.textInput]
-    : [styles.textInput, style];
-
-  if (!isEmpty(error)) {
-    textInputStyle.push(styles.erroredTextInput);
-    textLabelStyle.push(styles.erroredTextLabel);
-  }
-
-  return (
-    <View style={containerStyle ?? []}>
-      <Text style={textLabelStyle}>{label}</Text>
-      <TextInput
-        style={textInputStyle}
-        placeholderTextColor={theme.colors.secondaryText}
-        {...props}
-      />
-      <Text style={styles.textError}>{error}</Text>
-    </View>
-  );
+const shouldUpdate = (
+  prevProps: InputProps,
+  nextProps: InputProps,
+): boolean => {
+  return prevProps.value === nextProps.value;
 };
+
+const Input: React.FC<InputProps> = React.memo(
+  ({ label, error, style, containerStyle, ...props }) => {
+    const theme = useTheme();
+    const styles = themedStyles(theme);
+
+    const textLabelStyle: StyleProp<TextStyle> = [styles.textLabel];
+    const textInputStyle = !style
+      ? [styles.textInput]
+      : [styles.textInput, style];
+
+    const isFirstRender = useIsFirstRender();
+    if (!isFirstRender && !isEmpty(error)) {
+      textInputStyle.push(styles.erroredTextInput);
+      textLabelStyle.push(styles.erroredTextLabel);
+    }
+
+    return (
+      <View style={containerStyle ?? []}>
+        <Text style={textLabelStyle}>{label}</Text>
+        <TextInput
+          style={textInputStyle}
+          placeholderTextColor={theme.colors.secondaryText}
+          {...props}
+        />
+        <Text style={styles.textError}>{!isFirstRender ? error : ''}</Text>
+      </View>
+    );
+  },
+  shouldUpdate,
+);
 
 const themedStyles = makeThemedStyles((theme) =>
   StyleSheet.create({
