@@ -1,7 +1,9 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
+import { minLength, useFormReducer } from '@form';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { makeThemedStyles, useTheme } from '@theme';
+import { isEmpty } from '@util';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -14,6 +16,33 @@ export default function Register() {
   const theme = useTheme();
   const styles = themedStyles(theme);
   const headerHeight = useHeaderHeight();
+
+  const [formState, dispatch] = useFormReducer({
+    cpf: {
+      value: '',
+      rules: [],
+    },
+    password: {
+      value: '',
+      rules: [
+        {
+          validate: minLength(8),
+          errorMessage: 'Mínimo de 8 dígitos',
+        },
+      ],
+    },
+  });
+
+  const shouldDisableSubmit =
+    isEmpty(formState.cpf.value) ||
+    isEmpty(formState.password.value) ||
+    !formState.cpf.isValid ||
+    !formState.password.isValid;
+
+  function onCreateAccountPress() {
+    console.log(JSON.stringify(formState, null, 2));
+  }
+
   return (
     <ScrollView
       bounces={false}
@@ -25,27 +54,28 @@ export default function Register() {
           keyboardVerticalOffset={headerHeight + 12}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
+            value={formState.cpf.value}
+            error={formState.cpf.error}
+            onChangeText={(value) => dispatch({ field: 'cpf', value })}
             label="CPF"
-            error=""
             placeholder="Ex.: 000.000.000-00"
             keyboardType="number-pad"
+            maxLength={11}
           />
           <Input
+            value={formState.password.value}
+            error={formState.password.error}
+            onChangeText={(value) => dispatch({ field: 'password', value })}
             label="Senha"
-            error=""
             placeholder="Digite sua senha..."
-            secureTextEntry
-          />
-          <Input
-            label="Repetir senha"
-            error=""
-            placeholder="Repita sua senha..."
             secureTextEntry
           />
         </KeyboardAvoidingView>
         <View style={styles.footer}>
           <Button
             label="CRIAR CONTA"
+            onPress={onCreateAccountPress}
+            disabled={shouldDisableSubmit}
             labelStyle={styles.registerLabel}
             containerStyle={styles.registerContainer}
           />
@@ -61,7 +91,7 @@ const themedStyles = makeThemedStyles((theme) =>
       padding: 20,
       flex: 1,
       alignItems: 'center',
-      justifyContent: 'space-evenly',
+      justifyContent: 'space-around',
       backgroundColor: theme.colors.background,
     },
     form: {

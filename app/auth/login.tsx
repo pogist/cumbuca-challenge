@@ -34,7 +34,7 @@ export default function Login() {
     },
   });
 
-  const shouldDisableLogin =
+  const shouldDisableSubmit =
     isEmpty(formState.cpf.value) ||
     isEmpty(formState.password.value) ||
     !formState.cpf.isValid ||
@@ -80,7 +80,7 @@ export default function Login() {
           <Button
             label="LOGIN"
             onPress={onLoginPress}
-            disabled={shouldDisableLogin}
+            disabled={shouldDisableSubmit}
             labelStyle={styles.loginLabel}
             containerStyle={styles.loginContainer}
           />
