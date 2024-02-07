@@ -1,14 +1,26 @@
 import Button from '@components/Button';
 import TextField from '@components/TextField';
 import { makeThemedStyles, useTheme } from '@theme';
+import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 export default function Login() {
   const theme = useTheme();
   const styles = themedStyles(theme);
+  const gotoRegister = React.useCallback(() => {
+    router.push('/auth/register');
+  }, []);
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Text style={styles.header}>Login</Text>
       <View style={styles.form}>
         <TextField label="CPF" placeholder="Ex.: 000.000.000-00" error={null} />
@@ -24,9 +36,13 @@ export default function Login() {
           labelStyle={styles.loginLabel}
           containerStyle={styles.loginContainer}
         />
-        <Button label="Criar conta" labelStyle={styles.registerLabel} />
+        <Button
+          label="Criar conta"
+          onPress={gotoRegister}
+          labelStyle={styles.registerLabel}
+        />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

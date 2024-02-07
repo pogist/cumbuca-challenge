@@ -1,24 +1,32 @@
-import { makeThemedStyles, useTheme } from '@theme';
-import { Slot } from 'expo-router';
-import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { useTheme } from '@theme';
+import { Stack } from 'expo-router';
 
 export default function AuthLayout() {
   const theme = useTheme();
-  const styles = themedStyles(theme);
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <Slot />
-    </KeyboardAvoidingView>
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.colors.background as string,
+        },
+        headerTitleStyle: {
+          color: theme.colors.primaryText as string,
+        },
+        headerTintColor: theme.colors.secondary as string,
+        headerBackTitleVisible: false,
+      }}>
+      <Stack.Screen
+        name="login"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="register"
+        options={{
+          headerTitle: 'Criar conta',
+        }}
+      />
+    </Stack>
   );
 }
-
-const themedStyles = makeThemedStyles((theme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-  }),
-);
