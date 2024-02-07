@@ -24,11 +24,6 @@
       },
       "package": "io.github.pogist.cumbucachallenge"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/favicon.png"
-    },
     "plugins": [
       [
         "expo-build-properties",
