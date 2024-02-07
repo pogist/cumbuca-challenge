@@ -1,5 +1,5 @@
 import Button from '@components/Button';
-import TextField from '@components/TextField';
+import Input from '@components/Input';
 import { makeThemedStyles, useTheme } from '@theme';
 import { router } from 'expo-router';
 import React from 'react';
@@ -28,15 +28,15 @@ export default function Login() {
         <KeyboardAvoidingView
           style={styles.form}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          <TextField
+          <Input
             label="CPF"
-            error={null}
+            error=""
             placeholder="Ex.: 000.000.000-00"
             keyboardType="number-pad"
           />
-          <TextField
+          <Input
             label="Senha"
-            error={null}
+            error=""
             placeholder="Digite sua senha..."
             secureTextEntry
           />

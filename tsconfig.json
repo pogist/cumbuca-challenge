@@ -13,6 +13,9 @@
       ],
       "@theme": [
         "theme/index"
+      ],
+      "@util": [
+        "util/index"
       ]
     }
   },

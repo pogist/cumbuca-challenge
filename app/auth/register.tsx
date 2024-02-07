@@ -1,5 +1,5 @@
 import Button from '@components/Button';
-import TextField from '@components/TextField';
+import Input from '@components/Input';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { makeThemedStyles, useTheme } from '@theme';
 import {
@@ -24,21 +24,21 @@ export default function Register() {
           style={styles.form}
           keyboardVerticalOffset={headerHeight + 12}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          <TextField
+          <Input
             label="CPF"
-            error={null}
+            error=""
             placeholder="Ex.: 000.000.000-00"
             keyboardType="number-pad"
           />
-          <TextField
+          <Input
             label="Senha"
-            error={null}
+            error=""
             placeholder="Digite sua senha..."
             secureTextEntry
           />
-          <TextField
+          <Input
             label="Repetir senha"
-            error={null}
+            error=""
             placeholder="Repita sua senha..."
             secureTextEntry
           />
