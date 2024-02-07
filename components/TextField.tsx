@@ -43,6 +43,7 @@ const TextField: React.FC<TextFieldProps> = ({
 const themedStyles = makeThemedStyles((theme) =>
   StyleSheet.create({
     input: {
+      color: theme.colors.primaryText,
       borderColor: theme.colors.border,
       borderRadius: 10,
       borderWidth: 1,
