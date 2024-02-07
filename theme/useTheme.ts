@@ -2,6 +2,6 @@ import React from 'react';
 
 import { ThemeContext } from './ThemeProvider';
 
-export default function useTheme() {
+export function useTheme() {
   return React.useContext(ThemeContext);
 }

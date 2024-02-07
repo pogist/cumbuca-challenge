@@ -14,4 +14,4 @@ const lightTheme: Theme = {
   },
 };
 
-export default lightTheme;
+export { lightTheme };
