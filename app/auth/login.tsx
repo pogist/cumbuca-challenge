@@ -61,12 +61,12 @@ const themedStyles = makeThemedStyles((theme) =>
       fontWeight: '600',
     },
     form: {
-      gap: 16,
+      gap: 12,
       alignSelf: 'stretch',
       justifyContent: 'space-between',
     },
     footer: {
-      gap: 16,
+      gap: 12,
       alignSelf: 'stretch',
       alignItems: 'center',
       justifyContent: 'center',
