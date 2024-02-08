@@ -3,7 +3,7 @@ import Input from '@components/Input';
 import { minLength, useFormReducer } from '@form';
 import { makeThemedStyles, useTheme } from '@theme';
 import { isEmpty } from '@util';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   KeyboardAvoidingView,
@@ -17,6 +17,7 @@ import {
 export default function Login() {
   const theme = useTheme();
   const styles = themedStyles(theme);
+  const router = useRouter();
 
   const [formState, dispatch] = useFormReducer({
     cpf: {
@@ -45,7 +46,7 @@ export default function Login() {
   }
 
   function onLoginPress() {
-    console.log(JSON.stringify(formState, null, 2));
+    router.push('/products/');
   }
 
   return (
