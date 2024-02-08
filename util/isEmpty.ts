@@ -1,4 +1,4 @@
-import { isNullable } from './is-nullable';
+import { isNullable } from './isNullable';
 
 export function isEmpty(value?: string | null): boolean {
   if (isNullable(value)) {
