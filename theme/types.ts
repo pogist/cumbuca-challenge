@@ -7,10 +7,8 @@ export interface Theme {
     border: ColorValue;
     failure: ColorValue;
     primary: ColorValue;
-    primaryLight: ColorValue;
     primaryText: ColorValue;
     secondary: ColorValue;
-    secondaryLight: ColorValue;
     secondaryText: ColorValue;
   };
 }

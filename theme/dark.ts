@@ -6,11 +6,9 @@ const darkTheme: Theme = {
     background: '#181a28',
     border: '#7d95a2',
     failure: '#eb4735',
-    primary: '#fe829f',
-    primaryLight: '#ffe0e3',
+    primary: '#fe6170',
     primaryText: '#e6e6e6',
-    secondary: '#1dcfe5',
-    secondaryLight: '#7d95a2',
+    secondary: '#15a8ba',
     secondaryText: '#a6a6a6',
   },
 };
