@@ -1,6 +1,6 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { useForm, useFormErrors, useFormValidation } from '@hooks/form';
+import { useAuthForm } from '@hooks/auth';
 import { makeThemedStyles, useTheme } from '@theme';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -18,28 +18,11 @@ export default function Login() {
   const styles = themedStyles(theme);
   const router = useRouter();
 
-  const [form, setForm] = useForm({
-    cpf: '',
-    password: '',
-  });
-
-  const valid = useFormValidation(form, {
-    cpf: (text) => {
-      return !(text.length < 11);
-    },
-    password: (text) => {
-      return text.length >= 8;
-    },
-  });
-
-  const errors = useFormErrors(valid, {
-    cpf: 'CPF inválido',
-    password: 'Mínimo de 8 dígitos',
-  });
+  const { cpf, password, disabled } = useAuthForm();
 
   function onLogin() {
-    console.log(form);
-    // router.push('/products/');
+    console.log({ cpf: cpf.value, password: password.value });
+    router.push('/products/');
   }
 
   return (
@@ -53,18 +36,18 @@ export default function Login() {
           style={styles.form}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
-            value={form.cpf}
-            error={errors.cpf}
-            onChangeText={setForm('cpf')}
+            value={cpf.value}
+            error={cpf.error}
+            onChangeText={cpf.onChangeText}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
             maxLength={11}
           />
           <Input
-            value={form.password}
-            error={errors.password}
-            onChangeText={setForm('password')}
+            value={password.value}
+            error={password.error}
+            onChangeText={password.onChangeText}
             label="Senha"
             placeholder="Digite sua senha..."
             secureTextEntry
@@ -74,7 +57,7 @@ export default function Login() {
           <Button
             label="LOGIN"
             onPress={onLogin}
-            disabled={!valid.cpf || !valid.password}
+            disabled={disabled}
             labelStyle={styles.loginLabel}
             containerStyle={styles.loginContainer}
           />
