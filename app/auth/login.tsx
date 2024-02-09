@@ -1,6 +1,7 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
 import { useCPFValidation, useMinLength } from '@hooks/auth';
+import { useForm } from '@hooks/form';
 import { makeThemedStyles, useTheme } from '@theme';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -18,13 +19,20 @@ export default function Login() {
   const styles = themedStyles(theme);
   const router = useRouter();
 
-  const [cpf, setCPF] = React.useState('');
-  const [isCPFValid, cpfError] = useCPFValidation(cpf);
+  const [form, setForm] = useForm({
+    cpf: '',
+    password: '',
+  });
 
-  const [password, setPassword] = React.useState('');
-  const [isPasswordValid, passwordError] = useMinLength(password, 8);
+  const [isCPFValid, cpfError] = useCPFValidation(form.cpf);
+  const [isPasswordValid, passwordError] = useMinLength(form.password, 8);
 
   const disabled = !isCPFValid || !isPasswordValid;
+
+  function onLogin() {
+    console.log(form);
+    // router.push('/products/');
+  }
 
   return (
     <ScrollView
@@ -37,18 +45,18 @@ export default function Login() {
           style={styles.form}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
-            value={cpf}
+            value={form.cpf}
             error={cpfError}
-            onChangeText={setCPF}
+            onChangeText={setForm('cpf')}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
             maxLength={11}
           />
           <Input
-            value={password}
+            value={form.password}
             error={passwordError}
-            onChangeText={setPassword}
+            onChangeText={setForm('password')}
             label="Senha"
             placeholder="Digite sua senha..."
             secureTextEntry
@@ -57,7 +65,7 @@ export default function Login() {
         <View style={styles.footer}>
           <Button
             label="LOGIN"
-            onPress={() => router.push('/products/')}
+            onPress={onLogin}
             disabled={disabled}
             labelStyle={styles.loginLabel}
             containerStyle={styles.loginContainer}

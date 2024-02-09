@@ -1,6 +1,7 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
 import { useCPFValidation, useEqualPasswords, useMinLength } from '@hooks/auth';
+import { useForm } from '@hooks/form';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { makeThemedStyles, useTheme } from '@theme';
 import React from 'react';
@@ -17,25 +18,23 @@ export default function Register() {
   const styles = themedStyles(theme);
   const headerHeight = useHeaderHeight();
 
-  const [cpf, setCPF] = React.useState('');
-  const [isCPFValid, cpfError] = useCPFValidation(cpf);
+  const [form, setForm] = useForm({
+    cpf: '',
+    password: '',
+    repeatedPassword: '',
+  });
 
-  const [password, setPassword] = React.useState('');
-  const [isPasswordValid, passwordError] = useMinLength(password, 8);
-
-  const [repeatedPassword, setRepeatedPassword] = React.useState('');
+  const [isCPFValid, cpfError] = useCPFValidation(form.cpf);
+  const [isPasswordValid, passwordError] = useMinLength(form.password, 8);
   const [isRepeatedPasswordValid, repeatedPasswordError] = useEqualPasswords(
-    password,
-    repeatedPassword,
+    form.password,
+    form.repeatedPassword,
   );
 
   const disabled = !isCPFValid || !isPasswordValid || !isRepeatedPasswordValid;
 
   function onCreateAccount() {
-    console.log({
-      cpf,
-      password,
-    });
+    console.log(form);
   }
 
   return (
@@ -49,26 +48,26 @@ export default function Register() {
           keyboardVerticalOffset={headerHeight + 12}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
-            value={cpf}
+            value={form.cpf}
             error={cpfError}
-            onChangeText={setCPF}
+            onChangeText={setForm('cpf')}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
             maxLength={11}
           />
           <Input
-            value={password}
+            value={form.password}
             error={passwordError}
-            onChangeText={setPassword}
+            onChangeText={setForm('password')}
             label="Senha"
             placeholder="Digite sua senha..."
             secureTextEntry
           />
           <Input
-            value={repeatedPassword}
+            value={form.password}
             error={repeatedPasswordError}
-            onChangeText={setRepeatedPassword}
+            onChangeText={setForm('repeatedPassword')}
             label="Repetir senha"
             placeholder="Repita sua senha..."
             secureTextEntry
