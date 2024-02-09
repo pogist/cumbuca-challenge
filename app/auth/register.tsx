@@ -1,8 +1,8 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
+import { useCPFValidation, useEqualPasswords, useMinLength } from '@hooks/auth';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { makeThemedStyles, useTheme } from '@theme';
-import { isEmpty, useMinLength } from '@util';
 import React from 'react';
 import {
   KeyboardAvoidingView,
@@ -17,11 +17,19 @@ export default function Register() {
   const styles = themedStyles(theme);
   const headerHeight = useHeaderHeight();
 
-  const [cpf, setCpf] = React.useState('');
+  const [cpf, setCPF] = React.useState('');
+  const [isCPFValid, cpfError] = useCPFValidation(cpf);
+
   const [password, setPassword] = React.useState('');
   const [isPasswordValid, passwordError] = useMinLength(password, 8);
 
-  const disabled = isEmpty(cpf) || isEmpty(password) || !isPasswordValid;
+  const [repeatedPassword, setRepeatedPassword] = React.useState('');
+  const [isRepeatedPasswordValid, repeatedPasswordError] = useEqualPasswords(
+    password,
+    repeatedPassword,
+  );
+
+  const disabled = !isCPFValid || !isPasswordValid || !isRepeatedPasswordValid;
 
   function onCreateAccount() {
     console.log({
@@ -42,7 +50,8 @@ export default function Register() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
             value={cpf}
-            onChangeText={setCpf}
+            error={cpfError}
+            onChangeText={setCPF}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
@@ -56,14 +65,22 @@ export default function Register() {
             placeholder="Digite sua senha..."
             secureTextEntry
           />
+          <Input
+            value={repeatedPassword}
+            error={repeatedPasswordError}
+            onChangeText={setRepeatedPassword}
+            label="Repetir senha"
+            placeholder="Repita sua senha..."
+            secureTextEntry
+          />
         </KeyboardAvoidingView>
         <View style={styles.footer}>
           <Button
             label="CRIAR CONTA"
             onPress={onCreateAccount}
             disabled={disabled}
-            labelStyle={styles.registerLabel}
-            containerStyle={styles.registerContainer}
+            labelStyle={styles.createAccountLabel}
+            containerStyle={styles.createAccountContainer}
           />
         </View>
       </View>
@@ -90,11 +107,11 @@ const themedStyles = makeThemedStyles((theme) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    registerLabel: {
+    createAccountLabel: {
       color: '#ffffff',
       fontSize: 16,
     },
-    registerContainer: {
+    createAccountContainer: {
       height: 42,
       borderRadius: 10,
       alignSelf: 'stretch',

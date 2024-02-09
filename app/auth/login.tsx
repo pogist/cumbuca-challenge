@@ -1,7 +1,7 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
+import { useCPFValidation, useMinLength } from '@hooks/auth';
 import { makeThemedStyles, useTheme } from '@theme';
-import { isEmpty, useMinLength } from '@util';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -18,11 +18,13 @@ export default function Login() {
   const styles = themedStyles(theme);
   const router = useRouter();
 
-  const [cpf, setCpf] = React.useState('');
+  const [cpf, setCPF] = React.useState('');
+  const [isCPFValid, cpfError] = useCPFValidation(cpf);
+
   const [password, setPassword] = React.useState('');
   const [isPasswordValid, passwordError] = useMinLength(password, 8);
 
-  const disabled = isEmpty(cpf) || isEmpty(password) || !isPasswordValid;
+  const disabled = !isCPFValid || !isPasswordValid;
 
   return (
     <ScrollView
@@ -36,7 +38,8 @@ export default function Login() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
             value={cpf}
-            onChangeText={setCpf}
+            error={cpfError}
+            onChangeText={setCPF}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
