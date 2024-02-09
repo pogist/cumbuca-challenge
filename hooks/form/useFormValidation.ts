@@ -11,15 +11,17 @@ let validationCache: FormValidation<any> = {};
 
 export function useFormValidation<T extends Form>(
   form: T,
-  validations: Validations<T>,
+  validations: Partial<Validations<T>>,
 ): FormValidation<T> {
   const prevForm = usePrevious(form);
   const changedFields = diff(prevForm, form);
   const validation = { ...validationCache } as Record<keyof T, boolean>;
   for (const field of changedFields) {
-    const text = form[field];
     const validate = validations[field];
-    validation[field] = validate(text);
+    if (validate) {
+      const text = form[field];
+      validation[field] = validate(text);
+    }
   }
   validationCache = validation;
   return validation;
