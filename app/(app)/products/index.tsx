@@ -1,20 +1,42 @@
+import Icon from '@components/Icon';
 import { makeThemedStyles, useTheme } from '@theme';
-import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function Products() {
   const theme = useTheme();
   const styles = themedStyles(theme);
+
   const router = useRouter();
+  const [searchText, setSearchText] = React.useState('');
+
+  function onChangeSearchText(text: string) {
+    setSearchText(text);
+  }
+
   function onGotoAdd() {
     router.push('/products/add');
   }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Products Page</Text>
-      <Pressable onPress={onGotoAdd}>
-        <Text style={styles.label}>Go to add</Text>
-      </Pressable>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Icon
+              name="plus"
+              size={24}
+              color={theme.colors.secondary}
+              onPress={onGotoAdd}
+            />
+          ),
+          headerSearchBarOptions: {
+            onChangeText: (event) => onChangeSearchText(event.nativeEvent.text),
+          },
+        }}
+      />
+      <Text style={styles.label}>{searchText}</Text>
     </View>
   );
 }
