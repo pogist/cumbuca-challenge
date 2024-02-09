@@ -1,13 +1,14 @@
-import { useTheme, makeThemedStyles } from '@theme';
-import { isEmpty, useIsFirstRender } from '@util';
+import { useIsFirstRender } from '@hooks';
+import { makeThemedStyles, useTheme } from '@theme';
+import { isEmpty } from '@util';
 import React from 'react';
 import {
   StyleProp,
   StyleSheet,
   Text,
-  TextStyle,
   TextInput,
   TextInputProps,
+  TextStyle,
   View,
   ViewStyle,
 } from 'react-native';
