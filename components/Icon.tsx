@@ -10,7 +10,7 @@ import {
 
 export interface IconProps {
   name: React.ComponentProps<typeof Octicons>['name'];
-  size?: number;
+  size: number;
   color?: ColorValue;
   onPress?: () => void;
   disabled?: boolean;
@@ -18,7 +18,10 @@ export interface IconProps {
 
 const Icon: React.FC<IconProps> = ({ onPress, disabled, ...props }) => {
   const containerStyle = ({ pressed }: { pressed: boolean }) => {
-    const style: StyleProp<ViewStyle> = [];
+    const style: StyleProp<ViewStyle> = [
+      styles.container,
+      { width: props.size },
+    ];
     if (disabled) {
       style.push(styles.disabled);
     } else if (pressed) {
@@ -34,6 +37,10 @@ const Icon: React.FC<IconProps> = ({ onPress, disabled, ...props }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   pressed: {
     opacity: 0.75,
   },
