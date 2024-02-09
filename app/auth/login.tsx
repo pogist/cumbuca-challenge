@@ -1,7 +1,6 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { useCPFValidation, useMinLength } from '@hooks/auth';
-import { useForm } from '@hooks/form';
+import { useForm, useFormValidation } from '@hooks/form';
 import { makeThemedStyles, useTheme } from '@theme';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -24,10 +23,17 @@ export default function Login() {
     password: '',
   });
 
-  const [isCPFValid, cpfError] = useCPFValidation(form.cpf);
-  const [isPasswordValid, passwordError] = useMinLength(form.password, 8);
+  const valid = useFormValidation(form, {
+    cpf: (text) => {
+      return !(text.length < 11);
+    },
+    password: (text) => {
+      return text.length >= 8;
+    },
+  });
 
-  const disabled = !isCPFValid || !isPasswordValid;
+  const cpfError = !valid.cpf ? 'CPF inválido' : '';
+  const passwordError = !valid.password ? 'Mínimo de 8 dígitos' : '';
 
   function onLogin() {
     console.log(form);
@@ -66,7 +72,7 @@ export default function Login() {
           <Button
             label="LOGIN"
             onPress={onLogin}
-            disabled={disabled}
+            disabled={!valid.cpf || !valid.password}
             labelStyle={styles.loginLabel}
             containerStyle={styles.loginContainer}
           />

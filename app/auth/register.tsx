@@ -1,7 +1,6 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { useCPFValidation, useEqualPasswords, useMinLength } from '@hooks/auth';
-import { useForm } from '@hooks/form';
+import { useForm, useFormValidation } from '@hooks/form';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { makeThemedStyles, useTheme } from '@theme';
 import React from 'react';
@@ -21,17 +20,19 @@ export default function Register() {
   const [form, setForm] = useForm({
     cpf: '',
     password: '',
-    repeatedPassword: '',
   });
 
-  const [isCPFValid, cpfError] = useCPFValidation(form.cpf);
-  const [isPasswordValid, passwordError] = useMinLength(form.password, 8);
-  const [isRepeatedPasswordValid, repeatedPasswordError] = useEqualPasswords(
-    form.password,
-    form.repeatedPassword,
-  );
+  const valid = useFormValidation(form, {
+    cpf: (text) => {
+      return !(text.length < 11);
+    },
+    password: (text) => {
+      return text.length >= 8;
+    },
+  });
 
-  const disabled = !isCPFValid || !isPasswordValid || !isRepeatedPasswordValid;
+  const cpfError = !valid.cpf ? 'CPF inválido' : '';
+  const passwordError = !valid.password ? 'Mínimo de 8 dígitos' : '';
 
   function onCreateAccount() {
     console.log(form);
@@ -64,20 +65,12 @@ export default function Register() {
             placeholder="Digite sua senha..."
             secureTextEntry
           />
-          <Input
-            value={form.password}
-            error={repeatedPasswordError}
-            onChangeText={setForm('repeatedPassword')}
-            label="Repetir senha"
-            placeholder="Repita sua senha..."
-            secureTextEntry
-          />
         </KeyboardAvoidingView>
         <View style={styles.footer}>
           <Button
             label="CRIAR CONTA"
             onPress={onCreateAccount}
-            disabled={disabled}
+            disabled={!valid.cpf || !valid.password}
             labelStyle={styles.createAccountLabel}
             containerStyle={styles.createAccountContainer}
           />
