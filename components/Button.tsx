@@ -26,20 +26,17 @@ const Button: React.FC<ButtonProps> = ({
     ? styles.label
     : [styles.label, overrideLabelStyle];
 
-  const containerStyle = React.useCallback(
-    ({ pressed }: { pressed: boolean }) => {
-      const style: ViewStyle[] = !overrideContainerStyle
-        ? [styles.container]
-        : [styles.container, overrideContainerStyle];
-      if (disabled) {
-        style.push(styles.disabled);
-      } else if (pressed) {
-        style.push(styles.pressed);
-      }
-      return style;
-    },
-    [disabled, overrideContainerStyle],
-  );
+  const containerStyle = ({ pressed }: { pressed: boolean }) => {
+    const style: ViewStyle[] = !overrideContainerStyle
+      ? [styles.container]
+      : [styles.container, overrideContainerStyle];
+    if (disabled) {
+      style.push(styles.disabled);
+    } else if (pressed) {
+      style.push(styles.pressed);
+    }
+    return style;
+  };
 
   return (
     <Pressable style={containerStyle} onPress={onPress} disabled={disabled}>

@@ -33,11 +33,13 @@ export interface InputProps extends TextInputProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-const shouldUpdate = (
+const arePropsEqual = (
   prevProps: InputProps,
   nextProps: InputProps,
 ): boolean => {
-  return prevProps.value === nextProps.value;
+  return (
+    prevProps.value === nextProps.value && prevProps.error === nextProps.error
+  );
 };
 
 const Input: React.FC<InputProps> = React.memo(
@@ -68,7 +70,7 @@ const Input: React.FC<InputProps> = React.memo(
       </View>
     );
   },
-  shouldUpdate,
+  arePropsEqual,
 );
 
 const themedStyles = makeThemedStyles((theme) =>
