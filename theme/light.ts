@@ -1,11 +1,12 @@
 import { Theme } from './types';
 
 const lightTheme: Theme = {
+  isDark: false,
   colors: {
     background: '#ffffff',
-    border: '#e6e6e6',
+    border: '#3c3c43',
     failure: '#eb4735',
-    primary: '#fe949e',
+    primary: '#fe829f',
     primaryLight: '#ffe0e3',
     primaryText: '#100f10',
     secondary: '#1dcfe5',

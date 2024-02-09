@@ -11,14 +11,17 @@
       "@components/*": [
         "components/*"
       ],
+      "@form": [
+        "form/index"
+      ],
+      "@navigation": [
+        "navigation/index"
+      ],
       "@theme": [
         "theme/index"
       ],
       "@util": [
         "util/index"
-      ],
-      "@form": [
-        "form/index"
       ]
     }
   },
