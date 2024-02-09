@@ -1,6 +1,6 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { useForm, useFormValidation } from '@hooks/form';
+import { useForm, useFormErrors, useFormValidation } from '@hooks/form';
 import { makeThemedStyles, useTheme } from '@theme';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -32,8 +32,10 @@ export default function Login() {
     },
   });
 
-  const cpfError = !valid.cpf ? 'CPF inválido' : '';
-  const passwordError = !valid.password ? 'Mínimo de 8 dígitos' : '';
+  const errors = useFormErrors(valid, {
+    cpf: 'CPF inválido',
+    password: 'Mínimo de 8 dígitos',
+  });
 
   function onLogin() {
     console.log(form);
@@ -52,7 +54,7 @@ export default function Login() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
             value={form.cpf}
-            error={cpfError}
+            error={errors.cpf}
             onChangeText={setForm('cpf')}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
@@ -61,7 +63,7 @@ export default function Login() {
           />
           <Input
             value={form.password}
-            error={passwordError}
+            error={errors.password}
             onChangeText={setForm('password')}
             label="Senha"
             placeholder="Digite sua senha..."
