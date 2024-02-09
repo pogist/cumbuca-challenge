@@ -28,7 +28,7 @@ export type TextInputStyle = Omit<
 
 export interface InputProps extends TextInputProps {
   label: string;
-  error: string;
+  error?: string;
   style?: StyleProp<TextInputStyle>;
   containerStyle?: StyleProp<ViewStyle>;
 }
@@ -37,9 +37,7 @@ const arePropsEqual = (
   prevProps: InputProps,
   nextProps: InputProps,
 ): boolean => {
-  return (
-    prevProps.value === nextProps.value && prevProps.error === nextProps.error
-  );
+  return prevProps.value === nextProps.value;
 };
 
 const Input: React.FC<InputProps> = React.memo(

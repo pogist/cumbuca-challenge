@@ -1,8 +1,7 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { minLength, useFormReducer } from '@form';
 import { makeThemedStyles, useTheme } from '@theme';
-import { isEmpty } from '@util';
+import { isEmpty, useMinLength } from '@util';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -19,35 +18,11 @@ export default function Login() {
   const styles = themedStyles(theme);
   const router = useRouter();
 
-  const [formState, dispatch] = useFormReducer({
-    cpf: {
-      value: '',
-      rules: [],
-    },
-    password: {
-      value: '',
-      rules: [
-        {
-          validate: minLength(8),
-          errorMessage: 'Mínimo de 8 dígitos',
-        },
-      ],
-    },
-  });
+  const [cpf, setCpf] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [isPasswordValid, passwordError] = useMinLength(password, 8);
 
-  const shouldDisableSubmit =
-    isEmpty(formState.cpf.value) ||
-    isEmpty(formState.password.value) ||
-    !formState.cpf.isValid ||
-    !formState.password.isValid;
-
-  function onCreateAccountPress() {
-    router.push('/auth/register');
-  }
-
-  function onLoginPress() {
-    router.push('/products/');
-  }
+  const disabled = isEmpty(cpf) || isEmpty(password) || !isPasswordValid;
 
   return (
     <ScrollView
@@ -60,18 +35,17 @@ export default function Login() {
           style={styles.form}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
-            value={formState.cpf.value}
-            error={formState.cpf.error}
-            onChangeText={(value) => dispatch({ field: 'cpf', value })}
+            value={cpf}
+            onChangeText={setCpf}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
-            keyboardType="number-pad"
+            keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
             maxLength={11}
           />
           <Input
-            value={formState.password.value}
-            error={formState.password.error}
-            onChangeText={(value) => dispatch({ field: 'password', value })}
+            value={password}
+            error={passwordError}
+            onChangeText={setPassword}
             label="Senha"
             placeholder="Digite sua senha..."
             secureTextEntry
@@ -80,14 +54,14 @@ export default function Login() {
         <View style={styles.footer}>
           <Button
             label="LOGIN"
-            onPress={onLoginPress}
-            disabled={shouldDisableSubmit}
+            onPress={() => router.push('/products/')}
+            disabled={disabled}
             labelStyle={styles.loginLabel}
             containerStyle={styles.loginContainer}
           />
           <Button
             label="Criar conta"
-            onPress={onCreateAccountPress}
+            onPress={() => router.push('/auth/register')}
             labelStyle={styles.registerLabel}
           />
         </View>

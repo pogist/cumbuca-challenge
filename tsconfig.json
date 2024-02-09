@@ -11,9 +11,6 @@
       "@components/*": [
         "components/*"
       ],
-      "@form": [
-        "form/index"
-      ],
       "@navigation": [
         "navigation/index"
       ],

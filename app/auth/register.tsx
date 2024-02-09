@@ -1,9 +1,9 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { minLength, useFormReducer } from '@form';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { makeThemedStyles, useTheme } from '@theme';
-import { isEmpty } from '@util';
+import { isEmpty, useMinLength } from '@util';
+import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -17,30 +17,17 @@ export default function Register() {
   const styles = themedStyles(theme);
   const headerHeight = useHeaderHeight();
 
-  const [formState, dispatch] = useFormReducer({
-    cpf: {
-      value: '',
-      rules: [],
-    },
-    password: {
-      value: '',
-      rules: [
-        {
-          validate: minLength(8),
-          errorMessage: 'Mínimo de 8 dígitos',
-        },
-      ],
-    },
-  });
+  const [cpf, setCpf] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [isPasswordValid, passwordError] = useMinLength(password, 8);
 
-  const shouldDisableSubmit =
-    isEmpty(formState.cpf.value) ||
-    isEmpty(formState.password.value) ||
-    !formState.cpf.isValid ||
-    !formState.password.isValid;
+  const disabled = isEmpty(cpf) || isEmpty(password) || !isPasswordValid;
 
-  function onCreateAccountPress() {
-    console.log(JSON.stringify(formState, null, 2));
+  function onCreateAccount() {
+    console.log({
+      cpf,
+      password,
+    });
   }
 
   return (
@@ -54,18 +41,17 @@ export default function Register() {
           keyboardVerticalOffset={headerHeight + 12}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
-            value={formState.cpf.value}
-            error={formState.cpf.error}
-            onChangeText={(value) => dispatch({ field: 'cpf', value })}
+            value={cpf}
+            onChangeText={setCpf}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
-            keyboardType="number-pad"
+            keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
             maxLength={11}
           />
           <Input
-            value={formState.password.value}
-            error={formState.password.error}
-            onChangeText={(value) => dispatch({ field: 'password', value })}
+            value={password}
+            error={passwordError}
+            onChangeText={setPassword}
             label="Senha"
             placeholder="Digite sua senha..."
             secureTextEntry
@@ -74,8 +60,8 @@ export default function Register() {
         <View style={styles.footer}>
           <Button
             label="CRIAR CONTA"
-            onPress={onCreateAccountPress}
-            disabled={shouldDisableSubmit}
+            onPress={onCreateAccount}
+            disabled={disabled}
             labelStyle={styles.registerLabel}
             containerStyle={styles.registerContainer}
           />
