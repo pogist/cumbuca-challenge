@@ -11,17 +11,17 @@
       "@components/*": [
         "components/*"
       ],
-      "@hooks/*": [
-        "hooks/*",
-      ],
       "@hooks": [
         "hooks/index"
       ],
-      "@navigation": [
-        "navigation/index"
+      "@hooks/*": [
+        "hooks/*",
       ],
       "@theme": [
         "theme/index"
+      ],
+      "@types": [
+        "types/index"
       ],
       "@util": [
         "util/index"
