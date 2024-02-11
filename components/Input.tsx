@@ -1,5 +1,5 @@
 import { useIsFirstRender } from '@hooks';
-import { makeThemedStyles, useTheme } from '@theme';
+import { createStyles, useStyles, useTheme } from '@theming';
 import { isEmpty } from '@util';
 import React from 'react';
 import {
@@ -35,44 +35,41 @@ export interface InputProps extends TextInputProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-const Input: React.FC<InputProps> = ({
-  label,
-  error,
-  style,
-  containerStyle,
-  keyboardType,
-  ...props
-}) => {
-  const theme = useTheme();
-  const styles = themedStyles(theme);
+const Input: React.FC<InputProps> = React.memo(
+  ({ label, error, style, containerStyle, keyboardType, ...props }) => {
+    const theme = useTheme();
+    const styles = useStyles(themedStyles);
 
-  const textLabelStyle: StyleProp<TextStyle> = [styles.textLabel];
-  const textInputStyle = !style
-    ? [styles.textInput]
-    : [styles.textInput, style];
+    const textLabelStyle: StyleProp<TextStyle> = [styles.textLabel];
+    const textInputStyle = !style
+      ? [styles.textInput]
+      : [styles.textInput, style];
 
-  if (keyboardType && numericKeyboardTypes.includes(keyboardType)) {
-    textInputStyle.push(styles.numericInput);
-  }
+    if (keyboardType && numericKeyboardTypes.includes(keyboardType)) {
+      textInputStyle.push(styles.numericInput);
+    }
 
-  const isFirstRender = useIsFirstRender();
-  if (!isFirstRender && !isEmpty(error)) {
-    textInputStyle.push(styles.erroredTextInput);
-    textLabelStyle.push(styles.erroredTextLabel);
-  }
+    const isFirstRender = useIsFirstRender();
+    if (!isFirstRender && !isEmpty(error)) {
+      textInputStyle.push(styles.erroredTextInput);
+      textLabelStyle.push(styles.erroredTextLabel);
+    }
 
-  return (
-    <View style={containerStyle ?? []}>
-      {label && <Text style={textLabelStyle}>{label}</Text>}
-      <TextInput
-        style={textInputStyle}
-        placeholderTextColor={theme.colors.secondaryText}
-        {...props}
-      />
-      <Text style={styles.textError}>{!isFirstRender ? error : ''}</Text>
-    </View>
-  );
-};
+    return (
+      <View style={containerStyle ?? []}>
+        {label && <Text style={textLabelStyle}>{label}</Text>}
+        <TextInput
+          style={textInputStyle}
+          placeholderTextColor={theme.secondaryText}
+          {...props}
+        />
+        <Text style={styles.textError}>{!isFirstRender ? error : ''}</Text>
+      </View>
+    );
+  },
+);
+
+Input.displayName = 'Input';
 
 const numericKeyboardTypes: KeyboardTypeOptions[] = [
   'numeric',
@@ -81,11 +78,11 @@ const numericKeyboardTypes: KeyboardTypeOptions[] = [
   'numbers-and-punctuation',
 ];
 
-const themedStyles = makeThemedStyles((theme) =>
+const themedStyles = createStyles((theme) =>
   StyleSheet.create({
     textInput: {
-      color: theme.colors.primaryText,
-      borderColor: theme.colors.border,
+      color: theme.primaryText,
+      borderColor: theme.border,
       borderRadius: 10,
       borderWidth: 1,
       height: 40,
@@ -95,19 +92,19 @@ const themedStyles = makeThemedStyles((theme) =>
       fontVariant: ['tabular-nums'],
     },
     erroredTextInput: {
-      borderColor: theme.colors.failure,
+      borderColor: theme.danger,
     },
     textLabel: {
-      color: theme.colors.primaryText,
+      color: theme.primaryText,
       fontWeight: '500',
       marginBottom: 8,
       marginHorizontal: 10,
     },
     erroredTextLabel: {
-      color: theme.colors.failure,
+      color: theme.danger,
     },
     textError: {
-      color: theme.colors.failure,
+      color: theme.danger,
       fontSize: 10,
       fontWeight: '500',
       marginTop: 4,

@@ -1,5 +1,5 @@
 import { useProductFields } from '@hooks/product';
-import { makeThemedStyles, useTheme } from '@theme';
+import { createStyles, useStyles } from '@theming';
 import { Product } from '@types';
 import React from 'react';
 import {
@@ -25,8 +25,9 @@ export interface ProductListHeaderProps {
 
 export const ProductListHeader: React.FC<ProductListHeaderProps> = React.memo(
   ({ selectedField, setSelectedField }) => {
-    const theme = useTheme();
-    const styles = themedStyles(theme);
+    // const theme = useTheme();
+    // const styles = themedStyles(theme);
+    const styles = useStyles(themedStyles);
 
     const fields = useProductFields();
     const data: ProductListHeaderItemData[] = Object.keys(fields).map(
@@ -68,8 +69,9 @@ export const ProductListHeaderItem: React.FC<ProductListHeaderItemProps> = ({
   title,
   isSelected,
 }) => {
-  const theme = useTheme();
-  const styles = themedStyles(theme);
+  // const theme = useTheme();
+  // const styles = themedStyles(theme);
+  const styles = useStyles(themedStyles);
 
   const style: ViewStyle[] = [styles.unselectedItem];
   const titleStyle: TextStyle[] = [styles.unselectedItemTitle];
@@ -86,14 +88,14 @@ export const ProductListHeaderItem: React.FC<ProductListHeaderItemProps> = ({
   );
 };
 
-const themedStyles = makeThemedStyles((theme) =>
+const themedStyles = createStyles((theme) =>
   StyleSheet.create({
     container: {
       paddingVertical: 12,
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.background,
     },
     itemContainer: {
       flex: 1,
@@ -108,16 +110,16 @@ const themedStyles = makeThemedStyles((theme) =>
     },
     selectedItem: {
       borderRadius: 5,
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.primary,
     },
     unselectedItem: {
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.background,
     },
     selectedItemTitle: {
-      color: theme.colors.primaryText,
+      color: theme.primaryText,
     },
     unselectedItemTitle: {
-      color: theme.colors.primary,
+      color: theme.primary,
     },
   }),
 );

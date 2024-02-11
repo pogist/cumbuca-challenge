@@ -1,9 +1,9 @@
-import { makeThemedStyles, useTheme } from '@theme';
+import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
 import React from 'react';
 import { FlatList, ListRenderItem, StyleSheet, Text, View } from 'react-native';
 
-import Button from './Button';
+// import Button from './Button';
 import Icon from './Icon';
 import { ProductListHeader } from './ProductListHeader';
 
@@ -26,8 +26,7 @@ export const ProductList: React.FC<ProductListProps> = ({
   onIncreaseQuantity,
   onDecreaseQuantity,
 }) => {
-  const theme = useTheme();
-  const styles = themedStyles(theme);
+  const styles = useStyles(themedStyles);
 
   const keyExtractor = (item: Product, index: number) =>
     `${item.name}_${item.id}_${index}`;
@@ -78,7 +77,7 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
   onDecreaseQuantity,
 }) => {
   const theme = useTheme();
-  const styles = themedStyles(theme);
+  const styles = useStyles(themedStyles);
   return (
     <View>
       <View style={styles.item}>
@@ -94,7 +93,7 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
         <View style={styles.itemQuantityComponent}>
           <Icon
             name="dash"
-            color={theme.colors.secondary}
+            color={theme.secondary}
             size={16}
             onPress={onDecreaseQuantity}
           />
@@ -105,7 +104,7 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
         <View style={styles.itemQuantityComponent}>
           <Icon
             name="plus"
-            color={theme.colors.secondary}
+            color={theme.secondary}
             size={16}
             onPress={onIncreaseQuantity}
           />
@@ -115,20 +114,20 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
         </View>
       </View>
       <View style={styles.deleteButtonContainer}>
-        <Icon name="trash" size={24} color={theme.colors.failure} />
+        <Icon name="trash" size={24} color={theme.danger} />
       </View>
     </View>
   );
 };
 
-const themedStyles = makeThemedStyles((theme) =>
+const themedStyles = createStyles((theme) =>
   StyleSheet.create({
     list: {
       flex: 1,
       alignSelf: 'stretch',
     },
     itemSeparator: {
-      borderBottomColor: theme.colors.border,
+      borderBottomColor: theme.border,
       borderBottomWidth: StyleSheet.hairlineWidth,
     },
     item: {
@@ -137,7 +136,7 @@ const themedStyles = makeThemedStyles((theme) =>
       justifyContent: 'space-between',
     },
     itemText: {
-      color: theme.colors.primaryText,
+      color: theme.primaryText,
       fontVariant: ['tabular-nums'],
     },
     itemTextContainer: {
