@@ -1,4 +1,4 @@
-import { useTheme, makeThemedStyles } from '@theme';
+import { makeThemedStyles, useTheme } from '@theme';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function Settings() {

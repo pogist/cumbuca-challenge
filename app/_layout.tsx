@@ -1,22 +1,53 @@
 import { Octicons } from '@expo/vector-icons';
 import { ThemeProvider, darkTheme, lightTheme } from '@theme';
 import * as Font from 'expo-font';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
 import React from 'react';
 import { useColorScheme } from 'react-native';
 
-async function preloadIcons() {
-  await Font.loadAsync({ ...Octicons.font });
-}
-
-export default function RootLayout() {
+export default function AppLayout() {
   const scheme = useColorScheme();
+  const theme = scheme === 'dark' ? darkTheme : lightTheme;
+
   React.useEffect(() => {
-    preloadIcons();
+    (async () => await Font.loadAsync({ ...Octicons.font }))();
   }, []);
+
   return (
-    <ThemeProvider theme={scheme === 'dark' ? darkTheme : lightTheme}>
-      <Slot />
+    <ThemeProvider theme={theme}>
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: theme.colors.background as string,
+          },
+          headerTitleStyle: {
+            color: theme.colors.primaryText as string,
+          },
+          headerTintColor: theme.colors.secondary as string,
+          headerBackTitleVisible: false,
+        }}>
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="products"
+          options={{
+            title: 'Produtos',
+            gestureEnabled: false,
+            headerBackVisible: false,
+          }}
+        />
+        <Stack.Screen
+          name="settings"
+          options={{
+            title: 'Ajustes',
+            headerSearchBarOptions: undefined,
+          }}
+        />
+      </Stack>
     </ThemeProvider>
   );
 }
