@@ -15,48 +15,35 @@ export interface ButtonProps {
   containerStyle?: ViewStyle;
 }
 
-function arePropsEqual(
-  prevProps: ButtonProps,
-  nextProps: ButtonProps,
-): boolean {
+const Button: React.FC<ButtonProps> = ({
+  label,
+  onPress,
+  disabled,
+  labelStyle: overrideLabelStyle,
+  containerStyle: overrideContainerStyle,
+}) => {
+  const labelStyle = !overrideLabelStyle
+    ? styles.label
+    : [styles.label, overrideLabelStyle];
+
+  const containerStyle = ({ pressed }: { pressed: boolean }) => {
+    const style: ViewStyle[] = !overrideContainerStyle
+      ? [styles.container]
+      : [styles.container, overrideContainerStyle];
+    if (disabled) {
+      style.push(styles.disabled);
+    } else if (pressed) {
+      style.push(styles.pressed);
+    }
+    return style;
+  };
+
   return (
-    prevProps.label === nextProps.label &&
-    prevProps.disabled === nextProps.disabled
+    <Pressable style={containerStyle} onPress={onPress} disabled={disabled}>
+      <Text style={labelStyle}>{label}</Text>
+    </Pressable>
   );
-}
-
-const Button: React.FC<ButtonProps> = React.memo(
-  ({
-    label,
-    onPress,
-    disabled,
-    labelStyle: overrideLabelStyle,
-    containerStyle: overrideContainerStyle,
-  }) => {
-    const labelStyle = !overrideLabelStyle
-      ? styles.label
-      : [styles.label, overrideLabelStyle];
-
-    const containerStyle = ({ pressed }: { pressed: boolean }) => {
-      const style: ViewStyle[] = !overrideContainerStyle
-        ? [styles.container]
-        : [styles.container, overrideContainerStyle];
-      if (disabled) {
-        style.push(styles.disabled);
-      } else if (pressed) {
-        style.push(styles.pressed);
-      }
-      return style;
-    };
-
-    return (
-      <Pressable style={containerStyle} onPress={onPress} disabled={disabled}>
-        <Text style={labelStyle}>{label}</Text>
-      </Pressable>
-    );
-  },
-  arePropsEqual,
-);
+};
 
 const styles = StyleSheet.create({
   container: {
