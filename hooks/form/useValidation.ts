@@ -1,13 +1,17 @@
 export interface ValidationSpec {
-  validate: (text: string) => boolean;
   errorMessage: string;
+  validate: (text: string) => boolean;
 }
 
 export function useValidation(
-  text: string | undefined,
-  validation: ValidationSpec,
+  value: string | undefined,
+  validations: ValidationSpec[],
 ): [boolean, string] {
-  const isValid = validation.validate(text ?? '');
-  const errorMessage = !isValid ? validation.errorMessage : '';
-  return [isValid, errorMessage];
+  for (const validation of validations) {
+    const isValid = validation.validate(value ?? '');
+    if (!isValid) {
+      return [isValid, validation.errorMessage];
+    }
+  }
+  return [true, ''];
 }

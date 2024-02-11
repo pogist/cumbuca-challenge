@@ -1,5 +1,5 @@
 import { Octicons } from '@expo/vector-icons';
-import { ThemeProvider, darkTheme, lightTheme } from '@theme';
+import { ThemeProvider, darkTheme, lightTheme } from '@theming';
 import * as Font from 'expo-font';
 import { Stack } from 'expo-router';
 import React from 'react';
@@ -14,16 +14,16 @@ export default function AppLayout() {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider value={theme}>
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: theme.colors.background as string,
+            backgroundColor: theme.background as string,
           },
           headerTitleStyle: {
-            color: theme.colors.primaryText as string,
+            color: theme.primaryText as string,
           },
-          headerTintColor: theme.colors.secondary as string,
+          headerTintColor: theme.secondary as string,
           headerBackTitleVisible: false,
         }}>
         <Stack.Screen

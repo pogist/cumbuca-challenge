@@ -20,15 +20,19 @@ export default function Login() {
   const [cpf, setCPF] = React.useState<string>();
   const [password, setPassword] = React.useState<string>();
 
-  const [isCPFValid, cpfError] = useValidation(cpf, {
-    errorMessage: 'CPF inválido',
-    validate: (text) => !(text.length < 11),
-  });
+  const [isCPFValid, cpfError] = useValidation(cpf, [
+    {
+      errorMessage: 'CPF inválido',
+      validate: (value) => !(value.length < 11),
+    },
+  ]);
 
-  const [isPasswordValid, passwordError] = useValidation(password, {
-    errorMessage: 'Mínimo de 8 dígitos',
-    validate: (text) => text.length >= 8,
-  });
+  const [isPasswordValid, passwordError] = useValidation(password, [
+    {
+      errorMessage: 'Mínimo de 8 caracteres',
+      validate: (value) => value.length >= 8,
+    },
+  ]);
 
   const onLogin = () => {
     console.log({ cpf, password });

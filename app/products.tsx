@@ -3,8 +3,8 @@ import Icon from '@components/Icon';
 import Input from '@components/Input';
 import { ProductList } from '@components/ProductList';
 import { useHeaderHeight } from '@hooks';
-import { useForm, useFormErrors, useFormValidation } from '@hooks/form';
-import { makeThemedStyles, useTheme } from '@theme';
+import { useValidation } from '@hooks/form';
+import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
 import { Stack, useRouter } from 'expo-router';
 import React from 'react';
@@ -48,12 +48,37 @@ const sampleProducts: Product[] = [
   },
 ];
 
-export default function Products() {
-  const theme = useTheme();
-  const styles = themedStyles(theme);
+const isNumber = {
+  errorMessage: 'Não é um número válido',
+  validate: (value: string) => !isNaN(+value),
+};
 
+const isRequired = {
+  errorMessage: 'Campo obrigatório',
+  validate: (value: string) => value.length > 0,
+};
+
+const nameValidation = [isRequired];
+const priceValidation = [isRequired, isNumber];
+const quantityValidation = [
+  isRequired,
+  isNumber,
+  {
+    errorMessage: 'Campo deve ser inteiro',
+    validate: (value: string) => !/[,|\\.]/g.test(value),
+  },
+  {
+    errorMessage: 'Campo não pode ser 0',
+    validate: (value: string) => +value > 0,
+  },
+];
+
+export default function Products() {
   const router = useRouter();
   const headerHeight = useHeaderHeight();
+
+  const theme = useTheme();
+  const styles = useStyles(themedStyles);
 
   const [selectedField, setSelectedField] = React.useState<
     keyof Product | undefined
@@ -61,35 +86,34 @@ export default function Products() {
 
   const [searchText, setSearchText] = React.useState<string>();
 
-  const [form, onChangeText] = useForm({
-    name: '',
-    price: '',
-    quantity: '',
-  });
+  const [name, setName] = React.useState<string>();
+  const [price, setPrice] = React.useState<string>();
+  const [quantity, setQuantity] = React.useState<string>();
 
-  const valid = useFormValidation(form, {
-    name: (text) => {
-      return text.length > 0;
-    },
-    price: (text) => {
-      return !isNaN(+text);
-    },
-    quantity: (text) => {
-      if (Platform.OS !== 'ios') {
-        if (/[,|\\.]/g.test(text)) {
-          return false;
-        }
-      }
-      return !isNaN(+text);
-    },
-  });
+  const [isValidName, nameError] = useValidation(name, nameValidation);
+  const [isValidPrice, priceError] = useValidation(price, priceValidation);
+  const [isValidQuantity, quantityError] = useValidation(
+    quantity,
+    quantityValidation,
+  );
 
-  const errors = useFormErrors(valid, {
-    price: 'Não é um número válido',
-    quantity: 'Não é um número válido ou não é inteiro',
-  });
+  const onAdd = () => {
+    console.log({
+      name,
+      price,
+      quantity,
+    });
+  };
 
-  function onAdd() {}
+  const onPressSettingsIcon = React.useCallback(() => {
+    router.push('/settings');
+  }, []);
+
+  const onChangePrice = React.useCallback(
+    (value: string) =>
+      setPrice(!/,/g.test(value) ? value : value.replaceAll(/,/g, '.')),
+    [],
+  );
 
   return (
     <View style={styles.container}>
@@ -99,10 +123,8 @@ export default function Products() {
             <Icon
               name="three-bars"
               size={20}
-              color={theme.colors.secondary}
-              onPress={() => {
-                router.push('/settings');
-              }}
+              color={theme.secondary}
+              onPress={onPressSettingsIcon}
             />
           ),
           headerSearchBarOptions: {
@@ -112,24 +134,25 @@ export default function Products() {
       />
       <View style={[styles.addForm, { marginTop: headerHeight }]}>
         <Input
-          style={styles.inputStyle}
-          value={form.name}
-          onChangeText={onChangeText('name')}
+          containerStyle={styles.inputStyle}
+          value={name}
+          error={nameError}
+          onChangeText={setName}
           placeholder="Nome do produto"
         />
         <Input
-          style={styles.inputStyle}
-          value={form.price}
-          error={errors.price}
-          onChangeText={onChangeText('price')}
+          containerStyle={styles.inputStyle}
+          value={price}
+          error={priceError}
+          onChangeText={onChangePrice}
           placeholder="Valor do produto"
           keyboardType={Platform.OS === 'ios' ? 'decimal-pad' : 'numeric'}
         />
         <Input
-          style={styles.inputStyle}
-          value={form.quantity}
-          error={errors.quantity}
-          onChangeText={onChangeText('quantity')}
+          containerStyle={styles.inputStyle}
+          value={quantity}
+          error={quantityError}
+          onChangeText={setQuantity}
           placeholder="Quantidade de produtos"
           keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
         />
@@ -138,7 +161,7 @@ export default function Products() {
           labelStyle={styles.addButtonText}
           containerStyle={styles.addButton}
           onPress={onAdd}
-          disabled={!valid.name || !valid.price || !valid.quantity}
+          disabled={!isValidName || !isValidPrice || !isValidQuantity}
         />
       </View>
       <ProductList
@@ -153,25 +176,28 @@ export default function Products() {
   );
 }
 
-const themedStyles = makeThemedStyles((theme) =>
+const themedStyles = createStyles((theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
       alignItems: 'center',
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.background,
+      paddingHorizontal: 12,
     },
     inputStyle: {
-      margin: 8,
-      height: 32,
+      height: 40,
+      marginVertical: 8,
+      marginHorizontal: 6,
     },
     addForm: {
+      gap: 12,
       alignSelf: 'stretch',
     },
     addButton: {
-      marginBottom: 28,
+      marginVertical: 28,
     },
     addButtonText: {
-      color: theme.colors.primary,
+      color: theme.primary,
       fontSize: 18,
       fontWeight: '600',
     },
