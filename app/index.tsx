@@ -1,7 +1,7 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { useForm, useFormErrors, useFormValidation } from '@hooks/form';
-import { makeThemedStyles, useTheme } from '@theme';
+import { useValidation } from '@hooks/form';
+import { createStyles, useStyles } from '@theming';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -14,34 +14,26 @@ import {
 } from 'react-native';
 
 export default function Login() {
-  const theme = useTheme();
-  const styles = themedStyles(theme);
   const router = useRouter();
+  const styles = useStyles(themedStyles);
 
-  const [form, onChangeText] = useForm({
-    cpf: '',
-    password: '',
+  const [cpf, setCPF] = React.useState<string>();
+  const [password, setPassword] = React.useState<string>();
+
+  const [isCPFValid, cpfError] = useValidation(cpf, {
+    errorMessage: 'CPF inválido',
+    validate: (text) => !(text.length < 11),
   });
 
-  const valid = useFormValidation(form, {
-    cpf: (text: string) => {
-      // TODO: Add complete CPF validation
-      return !(text.length < 11);
-    },
-    password: (text: string) => {
-      return text.length >= 8;
-    },
+  const [isPasswordValid, passwordError] = useValidation(password, {
+    errorMessage: 'Mínimo de 8 dígitos',
+    validate: (text) => text.length >= 8,
   });
 
-  const errors = useFormErrors(valid, {
-    cpf: 'CPF inválido',
-    password: 'Mínimo de 8 dígitos',
-  });
-
-  function onLogin() {
-    console.log({ cpf: form.cpf, password: form.password });
+  const onLogin = () => {
+    console.log({ cpf, password });
     router.navigate('/products');
-  }
+  };
 
   return (
     <ScrollView
@@ -54,18 +46,18 @@ export default function Login() {
           style={styles.form}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
-            value={form.cpf}
-            error={errors.cpf}
-            onChangeText={onChangeText('cpf')}
+            value={cpf}
+            error={cpfError}
+            onChangeText={setCPF}
             label="CPF"
             placeholder="Ex.: 000.000.000-00"
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
             maxLength={11}
           />
           <Input
-            value={form.password}
-            error={errors.password}
-            onChangeText={onChangeText('password')}
+            value={password}
+            error={passwordError}
+            onChangeText={setPassword}
             label="Senha"
             placeholder="Digite sua senha..."
             secureTextEntry
@@ -74,7 +66,7 @@ export default function Login() {
         <Button
           label="LOGIN"
           onPress={onLogin}
-          disabled={!valid.cpf || !valid.password}
+          disabled={!isCPFValid || !isPasswordValid}
           labelStyle={styles.loginLabel}
           containerStyle={styles.loginContainer}
         />
@@ -83,17 +75,17 @@ export default function Login() {
   );
 }
 
-const themedStyles = makeThemedStyles((theme) =>
+const themedStyles = createStyles((theme) =>
   StyleSheet.create({
     container: {
       padding: 20,
       flex: 1,
       alignItems: 'center',
       justifyContent: 'space-around',
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.background,
     },
     header: {
-      color: theme.colors.primaryText,
+      color: theme.primaryText,
       fontSize: 32,
       fontWeight: '600',
     },
@@ -103,14 +95,14 @@ const themedStyles = makeThemedStyles((theme) =>
       justifyContent: 'space-between',
     },
     loginLabel: {
-      color: theme.colors.primaryText,
+      color: theme.primaryText,
       fontSize: 16,
     },
     loginContainer: {
       height: 42,
       borderRadius: 10,
       alignSelf: 'stretch',
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.primary,
     },
     scrollViewContent: {
       flexGrow: 1,
