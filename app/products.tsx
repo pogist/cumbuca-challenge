@@ -186,7 +186,7 @@ const themedStyles = createStyles((theme) =>
       flex: 1,
       alignItems: 'center',
       backgroundColor: theme.background,
-      paddingHorizontal: 12,
+      paddingHorizontal: 6,
     },
     inputStyle: {
       height: 40,

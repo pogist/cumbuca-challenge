@@ -2,14 +2,7 @@ import { useProductFields } from '@hooks/product';
 import { createStyles, useStyles } from '@theming';
 import { Product } from '@types';
 import React from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native';
 
 type ProductField = keyof Product | undefined;
 
@@ -70,17 +63,12 @@ export const ProductListHeaderItem: React.FC<ProductListHeaderItemProps> = ({
   isSelected,
 }) => {
   const styles = useStyles(themedStyles);
-
-  const style: ViewStyle[] = [styles.unselectedItem];
   const titleStyle: TextStyle[] = [styles.unselectedItemTitle];
-
   if (isSelected) {
-    style.push(styles.selectedItem);
     titleStyle.push(styles.selectedItemTitle);
   }
-
   return (
-    <View style={[styles.baseItem, style]}>
+    <View style={styles.item}>
       <Text style={[styles.baseItemText, titleStyle]}>{title}</Text>
     </View>
   );
@@ -92,32 +80,25 @@ const themedStyles = createStyles((theme) =>
       paddingVertical: 12,
       alignItems: 'center',
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'space-around',
       backgroundColor: theme.background,
     },
     itemContainer: {
-      flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    baseItem: {
+    item: {
       paddingHorizontal: 3,
     },
     baseItemText: {
+      fontSize: 15,
       fontWeight: '600',
     },
-    selectedItem: {
-      borderRadius: 5,
-      backgroundColor: theme.primary,
-    },
-    unselectedItem: {
-      backgroundColor: theme.background,
-    },
     selectedItemTitle: {
-      color: theme.primaryText,
+      color: theme.primary,
     },
     unselectedItemTitle: {
-      color: theme.primary,
+      color: theme.secondary,
     },
   }),
 );

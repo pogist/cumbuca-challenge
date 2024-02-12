@@ -5,10 +5,10 @@ type ProductFields = {
 };
 
 const fields: ProductFields = {
-  id: 'Id',
-  name: 'Nome',
+  id: 'ID',
+  name: 'Produto',
   price: 'Valor',
-  quantity: 'Quant.',
+  quantity: 'Quantidade',
   totalPrice: 'Total',
 };
 
