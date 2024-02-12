@@ -1,9 +1,9 @@
 import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
+import { shallowEqual } from '@util';
 import React from 'react';
 import { FlatList, ListRenderItem, StyleSheet, Text, View } from 'react-native';
 
-// import Button from './Button';
 import Icon from './Icon';
 import { ProductListHeader } from './ProductListHeader';
 
@@ -31,6 +31,8 @@ export const ProductList: React.FC<ProductListProps> = ({
   const keyExtractor = (item: Product, index: number) =>
     `${item.name}_${item.id}_${index}`;
 
+  const renderItemSeparator = () => <View style={styles.itemSeparator} />;
+
   const renderItem: ListRenderItem<Product> = ({ item }) => (
     <ProductListItem
       product={item}
@@ -47,15 +49,13 @@ export const ProductList: React.FC<ProductListProps> = ({
     />
   );
 
-  const renderItemSeparator = () => <View style={styles.itemSeparator} />;
-
   return (
     <FlatList
       style={styles.list}
       data={products}
       extraData={selectedField}
-      renderItem={renderItem}
       stickyHeaderIndices={[0]}
+      renderItem={renderItem}
       keyExtractor={keyExtractor}
       ListHeaderComponent={renderHeaderComponent}
       ItemSeparatorComponent={renderItemSeparator}
@@ -70,55 +70,62 @@ export interface ProductListItemProps {
   onDecreaseQuantity: () => void;
 }
 
-export const ProductListItem: React.FC<ProductListItemProps> = ({
-  product,
-  onDelete,
-  onIncreaseQuantity,
-  onDecreaseQuantity,
-}) => {
-  const theme = useTheme();
-  const styles = useStyles(themedStyles);
-  return (
-    <View>
-      <View style={styles.item}>
-        <View style={styles.itemTextContainer}>
-          <Text style={styles.itemText}>{product.id}</Text>
+function areProducListItemPropsEqual(
+  prev: ProductListItemProps,
+  next: ProductListItemProps,
+) {
+  return shallowEqual(prev.product, next.product);
+}
+
+export const ProductListItem: React.FC<ProductListItemProps> = React.memo(
+  ({ product, onDelete, onIncreaseQuantity, onDecreaseQuantity }) => {
+    const theme = useTheme();
+    const styles = useStyles(themedStyles);
+    return (
+      <View>
+        <View style={styles.item}>
+          <View style={styles.itemTextContainer}>
+            <Text style={styles.itemText}>{product.id}</Text>
+          </View>
+          <View style={styles.itemTextContainer}>
+            <Text style={styles.itemText}>{product.name}</Text>
+          </View>
+          <View style={styles.itemTextContainer}>
+            <Text style={styles.itemText}>{product.price}</Text>
+          </View>
+          <View style={styles.itemQuantityComponent}>
+            <Icon
+              name="dash"
+              color={theme.secondary}
+              size={16}
+              onPress={onDecreaseQuantity}
+            />
+          </View>
+          <View style={styles.itemQuantityComponent}>
+            <Text style={styles.itemText}>{product.quantity}</Text>
+          </View>
+          <View style={styles.itemQuantityComponent}>
+            <Icon
+              name="plus"
+              color={theme.secondary}
+              size={16}
+              onPress={onIncreaseQuantity}
+            />
+          </View>
+          <View style={styles.itemTextContainer}>
+            <Text style={styles.itemText}>{product.totalPrice}</Text>
+          </View>
         </View>
-        <View style={styles.itemTextContainer}>
-          <Text style={styles.itemText}>{product.name}</Text>
-        </View>
-        <View style={styles.itemTextContainer}>
-          <Text style={styles.itemText}>{product.price}</Text>
-        </View>
-        <View style={styles.itemQuantityComponent}>
-          <Icon
-            name="dash"
-            color={theme.secondary}
-            size={16}
-            onPress={onDecreaseQuantity}
-          />
-        </View>
-        <View style={styles.itemQuantityComponent}>
-          <Text style={styles.itemText}>{product.quantity}</Text>
-        </View>
-        <View style={styles.itemQuantityComponent}>
-          <Icon
-            name="plus"
-            color={theme.secondary}
-            size={16}
-            onPress={onIncreaseQuantity}
-          />
-        </View>
-        <View style={styles.itemTextContainer}>
-          <Text style={styles.itemText}>{product.totalPrice}</Text>
+        <View style={styles.deleteButtonContainer}>
+          <Icon name="trash" size={24} color={theme.danger} />
         </View>
       </View>
-      <View style={styles.deleteButtonContainer}>
-        <Icon name="trash" size={24} color={theme.danger} />
-      </View>
-    </View>
-  );
-};
+    );
+  },
+  areProducListItemPropsEqual,
+);
+
+ProductListItem.displayName = 'ProductListItem';
 
 const themedStyles = createStyles((theme) =>
   StyleSheet.create({
@@ -159,8 +166,5 @@ const themedStyles = createStyles((theme) =>
       margin: 12,
       alignItems: 'center',
     },
-    // deleteButtonLabel: {
-    //   color: theme.colors.failure,
-    // },
   }),
 );

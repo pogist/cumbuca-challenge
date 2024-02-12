@@ -115,6 +115,10 @@ export default function Products() {
     [],
   );
 
+  const onDeleteItem = React.useCallback((id: Product['id']) => id, []);
+  const onIncreaseQuantity = React.useCallback((id: Product['id']) => id, []);
+  const onDecreaseQuantity = React.useCallback((id: Product['id']) => id, []);
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -168,9 +172,9 @@ export default function Products() {
         products={sampleProducts}
         selectedField={selectedField}
         setSelectedField={setSelectedField}
-        onDeleteItem={(id) => id}
-        onIncreaseQuantity={(id) => id}
-        onDecreaseQuantity={(id) => id}
+        onDeleteItem={onDeleteItem}
+        onIncreaseQuantity={onIncreaseQuantity}
+        onDecreaseQuantity={onDecreaseQuantity}
       />
     </View>
   );

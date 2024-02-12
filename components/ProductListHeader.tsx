@@ -23,42 +23,42 @@ export interface ProductListHeaderProps {
   setSelectedField: (update: (field: ProductField) => ProductField) => void;
 }
 
-export const ProductListHeader: React.FC<ProductListHeaderProps> = React.memo(
-  ({ selectedField, setSelectedField }) => {
-    // const theme = useTheme();
-    // const styles = themedStyles(theme);
-    const styles = useStyles(themedStyles);
+export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
+  selectedField,
+  setSelectedField,
+}) => {
+  const fields = useProductFields();
+  const styles = useStyles(themedStyles);
 
-    const fields = useProductFields();
-    const data: ProductListHeaderItemData[] = Object.keys(fields).map(
-      (field) => ({
-        field: field as NonNullable<ProductField>,
-        title: fields[field as NonNullable<ProductField>],
-      }),
-    );
-
-    const renderItem = (item: ProductListHeaderItemData) => {
-      const onPress = () =>
-        setSelectedField((field) =>
-          item.field !== field ? item.field : undefined,
-        );
-
-      return (
-        <Pressable
-          style={styles.itemContainer}
-          key={item.field}
-          onPress={onPress}>
-          <ProductListHeaderItem
-            title={item.title}
-            isSelected={item.field === selectedField}
-          />
-        </Pressable>
+  const renderItem = (item: ProductListHeaderItemData) => {
+    const onPress = () =>
+      setSelectedField((field) =>
+        item.field !== field ? item.field : undefined,
       );
-    };
+    return (
+      <Pressable
+        key={item.field}
+        style={styles.itemContainer}
+        onPress={onPress}>
+        <ProductListHeaderItem
+          title={item.title}
+          isSelected={item.field === selectedField}
+        />
+      </Pressable>
+    );
+  };
 
-    return <View style={styles.container}>{data.map(renderItem)}</View>;
-  },
-);
+  return (
+    <View style={styles.container}>
+      {Object.keys(fields).map((field) =>
+        renderItem({
+          field: field as NonNullable<ProductField>,
+          title: fields[field as NonNullable<ProductField>],
+        }),
+      )}
+    </View>
+  );
+};
 
 export interface ProductListHeaderItemProps {
   title: string;
@@ -69,8 +69,6 @@ export const ProductListHeaderItem: React.FC<ProductListHeaderItemProps> = ({
   title,
   isSelected,
 }) => {
-  // const theme = useTheme();
-  // const styles = themedStyles(theme);
   const styles = useStyles(themedStyles);
 
   const style: ViewStyle[] = [styles.unselectedItem];
