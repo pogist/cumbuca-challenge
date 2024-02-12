@@ -1,3 +1,4 @@
+import { useCurrencyFormat, useNumberFormat } from '@hooks/product';
 import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
 import { shallowEqual } from '@util';
@@ -31,8 +32,6 @@ export const ProductList: React.FC<ProductListProps> = ({
   const keyExtractor = (item: Product, index: number) =>
     `${item.name}_${item.id}_${index}`;
 
-  const renderItemSeparator = () => <View style={styles.itemSeparator} />;
-
   const renderItem: ListRenderItem<Product> = ({ item }) => (
     <ProductListItem
       product={item}
@@ -58,7 +57,6 @@ export const ProductList: React.FC<ProductListProps> = ({
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       ListHeaderComponent={renderHeaderComponent}
-      ItemSeparatorComponent={renderItemSeparator}
     />
   );
 };
@@ -81,43 +79,48 @@ export const ProductListItem: React.FC<ProductListItemProps> = React.memo(
   ({ product, onDelete, onIncreaseQuantity, onDecreaseQuantity }) => {
     const theme = useTheme();
     const styles = useStyles(themedStyles);
+
+    const price = useCurrencyFormat(product.price / 100);
+    const totalPrice = useCurrencyFormat(product.totalPrice / 100);
+    const quantity = useNumberFormat(product.quantity);
+
     return (
-      <View>
-        <View style={styles.item}>
-          <View style={styles.itemTextContainer}>
-            <Text style={styles.itemText}>{product.id}</Text>
+      <View style={styles.item}>
+        <View style={styles.itemHeader}>
+          <View style={styles.itemTitlePriceContainer}>
+            <View style={styles.itemTitleIDContainer}>
+              <Text style={styles.itemTitle}>{product.name}</Text>
+              <Text style={styles.itemID}>(ID: {product.id})</Text>
+            </View>
+            <Text style={styles.itemPrice}>{price}</Text>
           </View>
-          <View style={styles.itemTextContainer}>
-            <Text style={styles.itemText}>{product.name}</Text>
+          <Icon
+            name="trash"
+            size={20}
+            color={theme.danger}
+            onPress={onDelete}
+          />
+        </View>
+        <View style={styles.itemFooter}>
+          <View style={styles.itemTotalContainer}>
+            <Text style={styles.itemTotalLabel}>Total:</Text>
+            <Text style={styles.itemTotal}>{totalPrice}</Text>
           </View>
-          <View style={styles.itemTextContainer}>
-            <Text style={styles.itemText}>{product.price}</Text>
-          </View>
-          <View style={styles.itemQuantityComponent}>
+          <View style={styles.itemQuantityContainer}>
             <Icon
               name="dash"
-              color={theme.secondary}
               size={16}
+              color={theme.secondary}
               onPress={onDecreaseQuantity}
             />
-          </View>
-          <View style={styles.itemQuantityComponent}>
-            <Text style={styles.itemText}>{product.quantity}</Text>
-          </View>
-          <View style={styles.itemQuantityComponent}>
+            <Text style={styles.itemQuantity}>{quantity}</Text>
             <Icon
               name="plus"
-              color={theme.secondary}
               size={16}
+              color={theme.secondary}
               onPress={onIncreaseQuantity}
             />
           </View>
-          <View style={styles.itemTextContainer}>
-            <Text style={styles.itemText}>{product.totalPrice}</Text>
-          </View>
-        </View>
-        <View style={styles.deleteButtonContainer}>
-          <Icon name="trash" size={24} color={theme.danger} />
         </View>
       </View>
     );
@@ -133,38 +136,78 @@ const themedStyles = createStyles((theme) =>
       flex: 1,
       alignSelf: 'stretch',
     },
-    itemSeparator: {
-      borderBottomColor: theme.border,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-    },
     item: {
-      marginTop: 12,
+      height: 120,
+      margin: 6,
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: theme.card,
+    },
+    itemHeader: {
+      flex: 1,
+      alignItems: 'flex-start',
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    itemText: {
+    itemTitleIDContainer: {
+      gap: 6,
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    itemTitle: {
+      color: theme.primaryText,
+      fontSize: 20,
+      fontVariant: ['tabular-nums'],
+      fontWeight: '700',
+      lineHeight: 20,
+    },
+    itemID: {
+      color: theme.secondaryText,
+      fontSize: 12,
+      fontVariant: ['tabular-nums'],
+      lineHeight: 12,
+    },
+    itemTitlePriceContainer: {
+      gap: 4,
+    },
+    itemPrice: {
       color: theme.primaryText,
       fontVariant: ['tabular-nums'],
     },
-    itemTextContainer: {
+    itemFooter: {
       flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    itemQuantityComponent: {
-      flex: 0.33,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    quantityContainer: {
-      flex: 1,
-      gap: 6,
+      alignItems: 'flex-end',
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    deleteButtonContainer: {
-      margin: 12,
+    itemTotalContainer: {
+      gap: 6,
       alignItems: 'center',
+      flexDirection: 'row',
+    },
+    itemTotalLabel: {
+      color: theme.primaryText,
+      fontSize: 14,
+      lineHeight: 14,
+    },
+    itemTotal: {
+      color: theme.primary,
+      fontSize: 18,
+      lineHeight: 18,
+      fontWeight: '600',
+      fontVariant: ['tabular-nums'],
+    },
+    itemQuantityContainer: {
+      gap: 14,
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    itemQuantity: {
+      color: theme.primaryText,
+      fontSize: 16,
+      lineHeight: 16,
+      fontWeight: '500',
+      fontVariant: ['tabular-nums'],
     },
   }),
 );

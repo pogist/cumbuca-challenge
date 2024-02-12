@@ -12,35 +12,35 @@ import { Platform, StyleSheet, View } from 'react-native';
 
 const sampleProducts: Product[] = [
   {
-    id: 0,
+    id: 1,
     name: 'Produto 1',
     price: 100,
     quantity: 2,
     totalPrice: 100 * 2,
   },
   {
-    id: 1,
+    id: 2,
     name: 'Produto 2',
     price: 500,
     quantity: 5,
     totalPrice: 500 * 5,
   },
   {
-    id: 2,
+    id: 3,
     name: 'Produto 3',
     price: 10,
     quantity: 15,
     totalPrice: 10 * 15,
   },
   {
-    id: 3,
+    id: 4,
     name: 'Produto 4',
     price: 11,
     quantity: 12,
     totalPrice: 11 * 12,
   },
   {
-    id: 4,
+    id: 5,
     name: 'Produto 3',
     price: 8,
     quantity: 5,
@@ -59,7 +59,16 @@ const isRequired = {
 };
 
 const nameValidation = [isRequired];
-const priceValidation = [isRequired, isNumber];
+
+const priceValidation = [
+  isRequired,
+  isNumber,
+  {
+    errorMessage: 'Campo não pode ser negativo',
+    validate: (value: string) => +value >= 0,
+  },
+];
+
 const quantityValidation = [
   isRequired,
   isNumber,
@@ -198,7 +207,7 @@ const themedStyles = createStyles((theme) =>
       alignSelf: 'stretch',
     },
     addButton: {
-      marginVertical: 28,
+      marginVertical: 16,
     },
     addButtonText: {
       color: theme.primary,
