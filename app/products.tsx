@@ -41,7 +41,7 @@ const sampleProducts: Product[] = [
   },
   {
     id: 5,
-    name: 'Produto 3',
+    name: 'Produto 5',
     price: 8,
     quantity: 5,
     totalPrice: 8 * 5,
@@ -89,6 +89,8 @@ export default function Products() {
   const theme = useTheme();
   const styles = useStyles(themedStyles);
 
+  const [products, setProducts] = React.useState(sampleProducts);
+
   const [selectedField, setSelectedField] = React.useState<
     keyof Product | undefined
   >(undefined);
@@ -121,6 +123,18 @@ export default function Products() {
   const onChangePrice = React.useCallback(
     (value: string) =>
       setPrice(!/,/g.test(value) ? value : value.replaceAll(/,/g, '.')),
+    [],
+  );
+
+  const onReorderProducts = React.useCallback(
+    async (fromIndex: number, toIndex: number) => {
+      setProducts((prev) => {
+        const copy = [...prev];
+        const removed = copy.splice(fromIndex, 1);
+        copy.splice(toIndex, 0, removed[0]);
+        return copy;
+      });
+    },
     [],
   );
 
@@ -178,12 +192,13 @@ export default function Products() {
         />
       </View>
       <ProductList
-        products={sampleProducts}
+        products={products}
         selectedField={selectedField}
-        setSelectedField={setSelectedField}
         onDeleteItem={onDeleteItem}
         onIncreaseQuantity={onIncreaseQuantity}
         onDecreaseQuantity={onDecreaseQuantity}
+        onReorderProducts={onReorderProducts}
+        setSelectedField={setSelectedField}
       />
     </View>
   );

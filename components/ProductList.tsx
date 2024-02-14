@@ -1,10 +1,10 @@
 import { useCurrencyFormat, useNumberFormat } from '@hooks/product';
 import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
-import { shallowEqual } from '@util';
 import React from 'react';
-import { FlatList, ListRenderItem, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import DragList, { DragListRenderItemInfo } from './DragList';
 import Icon from './Icon';
 import { ProductListHeader } from './ProductListHeader';
 
@@ -13,10 +13,11 @@ type ProductField = keyof Product | undefined;
 export interface ProductListProps {
   products: Product[];
   selectedField: ProductField;
-  setSelectedField: (update: (field: ProductField) => ProductField) => void;
+  onDecreaseQuantity: (id: Product['id']) => void;
   onDeleteItem: (id: Product['id']) => void;
   onIncreaseQuantity: (id: Product['id']) => void;
-  onDecreaseQuantity: (id: Product['id']) => void;
+  onReorderProducts: (fromIndex: number, toIndex: number) => Promise<void>;
+  setSelectedField: (update: (field: ProductField) => ProductField) => void;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
@@ -25,67 +26,84 @@ export const ProductList: React.FC<ProductListProps> = ({
   setSelectedField,
   onDeleteItem,
   onIncreaseQuantity,
+  onReorderProducts,
   onDecreaseQuantity,
 }) => {
   const styles = useStyles(themedStyles);
 
-  const keyExtractor = (item: Product, index: number) =>
-    `${item.name}_${item.id}_${index}`;
-
-  const renderItem: ListRenderItem<Product> = ({ item }) => (
-    <ProductListItem
-      product={item}
-      onDelete={() => onDeleteItem(item.id)}
-      onIncreaseQuantity={() => onIncreaseQuantity(item.id)}
-      onDecreaseQuantity={() => onDecreaseQuantity(item.id)}
-    />
-  );
-
-  const renderHeaderComponent = () => (
-    <ProductListHeader
-      selectedField={selectedField}
-      setSelectedField={setSelectedField}
-    />
+  const renderItem = React.useCallback(
+    ({
+      item,
+      isActive,
+      onDragStart,
+      onDragEnd,
+    }: DragListRenderItemInfo<Product>) => (
+      <ProductListItem
+        product={item}
+        isActive={isActive}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDelete={() => onDeleteItem(item.id)}
+        onIncreaseQuantity={() => onIncreaseQuantity(item.id)}
+        onDecreaseQuantity={() => onDecreaseQuantity(item.id)}
+      />
+    ),
+    [onDeleteItem, onIncreaseQuantity, onDecreaseQuantity],
   );
 
   return (
-    <FlatList
-      style={styles.list}
-      data={products}
-      extraData={selectedField}
-      stickyHeaderIndices={[0]}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      ListHeaderComponent={renderHeaderComponent}
-    />
+    <View style={styles.container}>
+      <ProductListHeader
+        selectedField={selectedField}
+        setSelectedField={setSelectedField}
+      />
+      <DragList
+        containerStyle={styles.container}
+        data={products}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        onReordered={onReorderProducts}
+      />
+    </View>
   );
 };
 
+function keyExtractor(item: Product) {
+  return `${item.name}_${item.id}`;
+}
+
 export interface ProductListItemProps {
   product: Product;
+  isActive: boolean;
+  onDragStart: () => void;
+  onDragEnd: () => void;
   onDelete: () => void;
   onIncreaseQuantity: () => void;
   onDecreaseQuantity: () => void;
 }
 
-function areProducListItemPropsEqual(
-  prev: ProductListItemProps,
-  next: ProductListItemProps,
-) {
-  return shallowEqual(prev.product, next.product);
-}
+export const ProductListItem: React.FC<ProductListItemProps> = ({
+  product,
+  isActive,
+  onDragStart,
+  onDragEnd,
+  onDelete,
+  onIncreaseQuantity,
+  onDecreaseQuantity,
+}) => {
+  const theme = useTheme();
+  const styles = useStyles(themedStyles);
 
-export const ProductListItem: React.FC<ProductListItemProps> = React.memo(
-  ({ product, onDelete, onIncreaseQuantity, onDecreaseQuantity }) => {
-    const theme = useTheme();
-    const styles = useStyles(themedStyles);
+  const price = useCurrencyFormat(product.price / 100);
+  const totalPrice = useCurrencyFormat(product.totalPrice / 100);
+  const quantity = useNumberFormat(product.quantity);
 
-    const price = useCurrencyFormat(product.price / 100);
-    const totalPrice = useCurrencyFormat(product.totalPrice / 100);
-    const quantity = useNumberFormat(product.quantity);
-
-    return (
-      <View style={styles.item}>
+  return (
+    <Pressable
+      delayLongPress={200}
+      onLongPress={onDragStart}
+      onPressOut={onDragEnd}>
+      <View style={[styles.item, isActive ? styles.itemPressed : {}]}>
         <View style={styles.itemHeader}>
           <View style={styles.itemTitlePriceContainer}>
             <View style={styles.itemTitleIDContainer}>
@@ -123,16 +141,13 @@ export const ProductListItem: React.FC<ProductListItemProps> = React.memo(
           </View>
         </View>
       </View>
-    );
-  },
-  areProducListItemPropsEqual,
-);
-
-ProductListItem.displayName = 'ProductListItem';
+    </Pressable>
+  );
+};
 
 const themedStyles = createStyles((theme) =>
   StyleSheet.create({
-    list: {
+    container: {
       flex: 1,
       alignSelf: 'stretch',
     },
@@ -142,6 +157,9 @@ const themedStyles = createStyles((theme) =>
       padding: 16,
       borderRadius: 16,
       backgroundColor: theme.card,
+    },
+    itemPressed: {
+      opacity: 0.75,
     },
     itemHeader: {
       flex: 1,

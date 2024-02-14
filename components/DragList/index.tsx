@@ -121,19 +121,28 @@ function DragList<T>(props: DragListProps<T>) {
             clientY - (layouts.get(activeKey.current)!.y + itemHeight / 2),
           );
 
+          const topEdge = wrapY - itemHeight / 2.5;
+          const bottomEdge = wrapY + itemHeight / 2.5;
+
+          let offset = 0;
+          if (topEdge < (insets?.top ?? 0)) {
+            offset =
+              scrollPos.current >= itemHeight
+                ? -itemHeight
+                : -scrollPos.current;
+          } else if (bottomEdge > wrapLayout.current.height) {
+            offset = scrollPos.current + itemHeight;
+          }
+
+          if (offset !== 0) {
+            flatRef?.current?.scrollToOffset({
+              animated: true,
+              offset: scrollPos.current + offset,
+            });
+          }
+
           if (panIndex.current !== currentIndex) {
             setExtra((prev) => ({ ...prev, panIndex: currentIndex }));
-            const topEdge = wrapY - itemHeight / 2;
-            const bottomEdge = wrapY + itemHeight / 2;
-            if (
-              topEdge < (insets?.top ?? 0) ||
-              bottomEdge > wrapLayout.current.height
-            ) {
-              flatRef?.current?.scrollToIndex({
-                index: currentIndex,
-                viewPosition: 0.5,
-              });
-            }
           }
 
           panIndex.current = currentIndex;
@@ -156,10 +165,10 @@ function DragList<T>(props: DragListProps<T>) {
   ).current;
 
   const reset = useCallback(() => {
-    setExtra(() => ({ activeKey: null, panIndex: -1 }));
     activeIndex.current = -1;
     activeKey.current = null;
     panIndex.current = -1;
+    setExtra({ activeKey: null, panIndex: -1 });
     pan.setValue(0);
     panGranted.current = false;
   }, []);
@@ -182,7 +191,7 @@ function DragList<T>(props: DragListProps<T>) {
           activeIndex.current = info.index;
           activeKey.current = key;
           panIndex.current = activeIndex.current;
-          setExtra(() => ({ activeKey: key, panIndex: info.index }));
+          setExtra({ activeKey: key, panIndex: info.index });
         }
       };
       const onDragEnd = () => {
@@ -284,7 +293,7 @@ function CellRendererComponent<T>(props: CellRendererProps<T>) {
           toValue: layouts.get(activeKey)!.height,
           useNativeDriver: true,
         }).start();
-        setIsOffset(() => true);
+        setIsOffset(true);
         return;
       } else if (index >= activeIndex && index <= panIndex) {
         Animated.timing(slide, {
@@ -293,14 +302,14 @@ function CellRendererComponent<T>(props: CellRendererProps<T>) {
           toValue: -layouts.get(activeKey)!.height,
           useNativeDriver: true,
         }).start();
-        setIsOffset(() => true);
+        setIsOffset(true);
         return;
       }
     }
     if (!activeKey) {
       slide.setValue(0);
     }
-    setIsOffset(() => false);
+    setIsOffset(false);
   }, [index, panIndex, activeKey, activeIndex, isActive]);
 
   useEffect(() => {
@@ -319,7 +328,7 @@ function CellRendererComponent<T>(props: CellRendererProps<T>) {
       Animated.timing(scale, {
         duration: SCALE_DURATION,
         easing: Easing.inOut(Easing.linear),
-        toValue: 1.05,
+        toValue: 1.02,
         useNativeDriver: true,
       }).start();
     } else {
@@ -333,10 +342,10 @@ function CellRendererComponent<T>(props: CellRendererProps<T>) {
   }, [isActive]);
 
   function onCellLayout(event: LayoutChangeEvent) {
+    layouts.set(key, event.nativeEvent.layout);
     if (onLayout) {
       onLayout(event);
     }
-    layouts.set(key, event.nativeEvent.layout);
   }
 
   const animation = isActive
