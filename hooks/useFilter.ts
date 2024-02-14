@@ -1,6 +1,6 @@
 import { isEmpty } from '@util';
 
-export function usePropFilter<T extends object>(
+export function useFilter<T extends object>(
   list: T[],
   prop: keyof T,
   term?: string,

@@ -15,49 +15,35 @@ export interface ButtonProps {
   containerStyle?: ViewStyle;
 }
 
-function arePropsEqual(prev: ButtonProps, next: ButtonProps) {
+const Button: React.FC<ButtonProps> = ({
+  label,
+  onPress,
+  disabled,
+  labelStyle: overrideLabelStyle,
+  containerStyle: overrideContainerStyle,
+}) => {
+  const labelStyle = !overrideLabelStyle
+    ? styles.label
+    : [styles.label, overrideLabelStyle];
+
+  const containerStyle = ({ pressed }: { pressed: boolean }) => {
+    const style: ViewStyle[] = !overrideContainerStyle
+      ? [styles.container]
+      : [styles.container, overrideContainerStyle];
+    if (disabled) {
+      style.push(styles.disabled);
+    } else if (pressed) {
+      style.push(styles.pressed);
+    }
+    return style;
+  };
+
   return (
-    prev.label === next.label &&
-    prev.disabled === next.disabled &&
-    Object.is(prev.labelStyle, next.labelStyle) &&
-    Object.is(prev.containerStyle, next.containerStyle)
+    <Pressable style={containerStyle} onPress={onPress} disabled={disabled}>
+      <Text style={labelStyle}>{label}</Text>
+    </Pressable>
   );
-}
-
-const Button: React.FC<ButtonProps> = React.memo(
-  ({
-    label,
-    onPress,
-    disabled,
-    labelStyle: overrideLabelStyle,
-    containerStyle: overrideContainerStyle,
-  }) => {
-    const labelStyle = !overrideLabelStyle
-      ? styles.label
-      : [styles.label, overrideLabelStyle];
-
-    const containerStyle = ({ pressed }: { pressed: boolean }) => {
-      const style: ViewStyle[] = !overrideContainerStyle
-        ? [styles.container]
-        : [styles.container, overrideContainerStyle];
-      if (disabled) {
-        style.push(styles.disabled);
-      } else if (pressed) {
-        style.push(styles.pressed);
-      }
-      return style;
-    };
-
-    return (
-      <Pressable style={containerStyle} onPress={onPress} disabled={disabled}>
-        <Text style={labelStyle}>{label}</Text>
-      </Pressable>
-    );
-  },
-  arePropsEqual,
-);
-
-Button.displayName = 'Button';
+};
 
 const styles = StyleSheet.create({
   container: {

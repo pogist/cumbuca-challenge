@@ -9,30 +9,30 @@ import Icon from './Icon';
 import { ProductListHeader } from './ProductListHeader';
 
 type SortOrder = 'asc' | 'desc';
-type ProductField = keyof Product | undefined;
+type SortField = keyof Product | undefined;
 
 export interface ProductListProps {
   products: Product[];
   sortOrder: SortOrder;
-  selectedField: ProductField;
-  onDecreaseQuantity: (id: Product['id']) => void;
-  onDeleteItem: (id: Product['id']) => void;
-  onIncreaseQuantity: (id: Product['id']) => void;
-  onReorderProducts: (fromIndex: number, toIndex: number) => Promise<void>;
-  setSelectedField: (update: (field: ProductField) => ProductField) => void;
+  sortField: SortField;
   setSortOrder: (update: (order: SortOrder) => SortOrder) => void;
+  setSortField: (update: (field: SortField) => SortField) => void;
+  onRemove: (id: Product['id']) => void;
+  onReorder: (fromIndex: number, toIndex: number) => Promise<void>;
+  onIncreaseQuantity: (id: Product['id']) => void;
+  onDecreaseQuantity: (id: Product['id']) => void;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
   sortOrder,
-  selectedField,
-  onDeleteItem,
-  onIncreaseQuantity,
-  onReorderProducts,
-  onDecreaseQuantity,
-  setSelectedField,
+  sortField,
   setSortOrder,
+  setSortField,
+  onRemove,
+  onReorder,
+  onIncreaseQuantity,
+  onDecreaseQuantity,
 }) => {
   const styles = useStyles(themedStyles);
 
@@ -48,28 +48,28 @@ export const ProductList: React.FC<ProductListProps> = ({
         isActive={isActive}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
-        onDelete={() => onDeleteItem(item.id)}
+        onRemove={() => onRemove(item.id)}
         onIncreaseQuantity={() => onIncreaseQuantity(item.id)}
         onDecreaseQuantity={() => onDecreaseQuantity(item.id)}
       />
     ),
-    [onDeleteItem, onIncreaseQuantity, onDecreaseQuantity],
+    [onRemove, onIncreaseQuantity, onDecreaseQuantity],
   );
 
   return (
     <View style={styles.container}>
       <ProductListHeader
         sortOrder={sortOrder}
-        selectedField={selectedField}
-        setSelectedField={setSelectedField}
+        sortField={sortField}
         setSortOrder={setSortOrder}
+        setSortField={setSortField}
       />
       <DragList
         containerStyle={styles.container}
         data={products}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        onReordered={onReorderProducts}
+        onReordered={onReorder}
       />
     </View>
   );
@@ -84,7 +84,7 @@ export interface ProductListItemProps {
   isActive: boolean;
   onDragStart: () => void;
   onDragEnd: () => void;
-  onDelete: () => void;
+  onRemove: () => void;
   onIncreaseQuantity: () => void;
   onDecreaseQuantity: () => void;
 }
@@ -94,15 +94,15 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
   isActive,
   onDragStart,
   onDragEnd,
-  onDelete,
+  onRemove,
   onIncreaseQuantity,
   onDecreaseQuantity,
 }) => {
   const theme = useTheme();
   const styles = useStyles(themedStyles);
 
-  const price = useCurrencyFormat(product.price / 100);
-  const totalPrice = useCurrencyFormat(product.totalPrice / 100);
+  const price = useCurrencyFormat(product.price);
+  const totalPrice = useCurrencyFormat(product.totalPrice);
   const quantity = useNumberFormat(product.quantity);
 
   return (
@@ -120,7 +120,7 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
             name="trash"
             size={20}
             color={theme.danger}
-            onPress={onDelete}
+            onPress={onRemove}
           />
         </View>
         <View style={styles.itemFooter}>

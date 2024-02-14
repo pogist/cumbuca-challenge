@@ -1,6 +1,6 @@
 export interface ValidationSpec {
-  errorMessage: string;
   validate: (text: string) => boolean;
+  errorMessage?: string;
 }
 
 export function useValidation(
@@ -10,7 +10,7 @@ export function useValidation(
   for (const validation of validations) {
     const isValid = validation.validate(value ?? '');
     if (!isValid) {
-      return [isValid, validation.errorMessage];
+      return [isValid, validation.errorMessage ?? ''];
     }
   }
   return [true, ''];

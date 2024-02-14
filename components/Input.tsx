@@ -3,7 +3,6 @@ import { createStyles, useStyles, useTheme } from '@theming';
 import { isEmpty } from '@util';
 import React from 'react';
 import {
-  KeyboardTypeOptions,
   StyleProp,
   StyleSheet,
   Text,
@@ -35,48 +34,51 @@ export interface InputProps extends TextInputProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-const Input: React.FC<InputProps> = React.memo(
-  ({ label, error, style, containerStyle, keyboardType, ...props }) => {
-    const theme = useTheme();
-    const styles = useStyles(themedStyles);
+const Input: React.FC<InputProps> = ({
+  label,
+  error,
+  style,
+  containerStyle,
+  keyboardType,
+  ...props
+}) => {
+  const theme = useTheme();
+  const styles = useStyles(themedStyles);
 
-    const textLabelStyle: StyleProp<TextStyle> = [styles.textLabel];
-    const textInputStyle = !style
-      ? [styles.textInput]
-      : [styles.textInput, style];
+  const textLabelStyle: StyleProp<TextStyle> = [styles.textLabel];
+  const textInputStyle = !style
+    ? [styles.textInput]
+    : [styles.textInput, style];
 
-    if (keyboardType && numericKeyboardTypes.includes(keyboardType)) {
-      textInputStyle.push(styles.numericInput);
-    }
+  const numericTypes = React.useRef([
+    'numeric',
+    'number-pad',
+    'decimal-pad',
+    'numbers-and-punctuation',
+  ]).current;
 
-    const isFirstRender = useIsFirstRender();
-    if (!isFirstRender && !isEmpty(error)) {
-      textInputStyle.push(styles.erroredTextInput);
-      textLabelStyle.push(styles.erroredTextLabel);
-    }
+  if (keyboardType && numericTypes.includes(keyboardType)) {
+    textInputStyle.push(styles.numericInput);
+  }
 
-    return (
-      <View style={containerStyle ?? []}>
-        {label && <Text style={textLabelStyle}>{label}</Text>}
-        <TextInput
-          style={textInputStyle}
-          placeholderTextColor={theme.secondaryText}
-          {...props}
-        />
-        <Text style={styles.textError}>{!isFirstRender ? error : ''}</Text>
-      </View>
-    );
-  },
-);
+  const isFirstRender = useIsFirstRender();
+  if (!isFirstRender && !isEmpty(error)) {
+    textInputStyle.push(styles.erroredTextInput);
+    textLabelStyle.push(styles.erroredTextLabel);
+  }
 
-Input.displayName = 'Input';
-
-const numericKeyboardTypes: KeyboardTypeOptions[] = [
-  'numeric',
-  'number-pad',
-  'decimal-pad',
-  'numbers-and-punctuation',
-];
+  return (
+    <View style={containerStyle ?? []}>
+      {label && <Text style={textLabelStyle}>{label}</Text>}
+      <TextInput
+        style={textInputStyle}
+        placeholderTextColor={theme.secondaryText}
+        {...props}
+      />
+      <Text style={styles.textError}>{!isFirstRender ? error : ''}</Text>
+    </View>
+  );
+};
 
 const themedStyles = createStyles((theme) =>
   StyleSheet.create({

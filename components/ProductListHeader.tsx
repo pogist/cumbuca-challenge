@@ -6,25 +6,25 @@ import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native';
 import Icon from './Icon';
 
 type SortOrder = 'asc' | 'desc';
-type ProductField = keyof Product | undefined;
+type SortField = keyof Product | undefined;
 
 type ProductListHeaderItemData = {
   title: string;
-  field: NonNullable<ProductField>;
+  field: NonNullable<SortField>;
 };
 
 export interface ProductListHeaderProps {
   sortOrder: SortOrder;
-  selectedField: ProductField;
+  sortField: SortField;
   setSortOrder: (update: (order: SortOrder) => SortOrder) => void;
-  setSelectedField: (update: (field: ProductField) => ProductField) => void;
+  setSortField: (update: (field: SortField) => SortField) => void;
 }
 
 export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
   sortOrder,
-  selectedField,
+  sortField,
   setSortOrder,
-  setSelectedField,
+  setSortField,
 }) => {
   const styles = useStyles(themedStyles);
   const fields = useRef({
@@ -37,9 +37,7 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
 
   const renderItem = (item: ProductListHeaderItemData) => {
     const onPress = () =>
-      setSelectedField((field) =>
-        item.field !== field ? item.field : undefined,
-      );
+      setSortField((field) => (item.field !== field ? item.field : undefined));
     return (
       <Pressable
         key={item.field}
@@ -47,7 +45,7 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
         onPress={onPress}>
         <ProductListHeaderItem
           title={item.title}
-          isSelected={item.field === selectedField}
+          isSelected={item.field === sortField}
         />
       </Pressable>
     );
@@ -61,8 +59,8 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
     <View style={styles.container}>
       {Object.keys(fields).map((field) =>
         renderItem({
-          field: field as NonNullable<ProductField>,
-          title: fields[field as NonNullable<ProductField>],
+          field: field as NonNullable<SortField>,
+          title: fields[field as NonNullable<SortField>],
         }),
       )}
       <Icon

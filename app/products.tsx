@@ -2,16 +2,20 @@ import Button from '@components/Button';
 import Icon from '@components/Icon';
 import Input from '@components/Input';
 import { ProductList } from '@components/ProductList';
+import { useFilter, useHeaderHeight, useSort, useValidation } from '@hooks';
 import {
-  useHeaderHeight,
-  usePropFilter,
-  usePropSort,
-  useValidation,
-} from '@hooks';
+  add,
+  decreaseQuantity,
+  increaseQuantity,
+  remove,
+  reorder,
+  useProducts,
+} from '@state/products';
 import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
+import { isEmpty } from '@util';
 import { Stack, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 const sampleProducts: Product[] = [
@@ -22,141 +26,53 @@ const sampleProducts: Product[] = [
     quantity: 2,
     totalPrice: 100 * 2,
   },
-  {
-    id: 2,
-    name: 'Produto 2',
-    price: 500,
-    quantity: 5,
-    totalPrice: 500 * 5,
-  },
-  {
-    id: 3,
-    name: 'Produto 3',
-    price: 10,
-    quantity: 15,
-    totalPrice: 10 * 15,
-  },
-  {
-    id: 4,
-    name: 'Produto 4',
-    price: 11,
-    quantity: 12,
-    totalPrice: 11 * 12,
-  },
-  {
-    id: 5,
-    name: 'Produto 5',
-    price: 8,
-    quantity: 5,
-    totalPrice: 8 * 5,
-  },
-  {
-    id: 6,
-    name: 'Carro',
-    price: 8,
-    quantity: 5,
-    totalPrice: 8 * 5,
-  },
-  {
-    id: 7,
-    name: 'Carreta',
-    price: 8,
-    quantity: 5,
-    totalPrice: 8 * 5,
-  },
-];
-
-const isRequired = {
-  errorMessage: 'Campo obrigatório',
-  validate: (value: string) => value.length > 0,
-};
-
-const isNumber = {
-  errorMessage: 'Campo deve ser um número válido',
-  validate: (value: string) => !isNaN(+value),
-};
-
-const nameValidation = [isRequired];
-const priceValidation = [isRequired, isNumber];
-
-const quantityValidation = [
-  isRequired,
-  isNumber,
-  {
-    errorMessage: 'Campo deve ser um número inteiro',
-    validate: (value: string) => !/[,|\\.]/g.test(value),
-  },
-  {
-    errorMessage: 'Campo não pode ser 0',
-    validate: (value: string) => +value > 0,
-  },
 ];
 
 export default function Products() {
   const theme = useTheme();
   const styles = useStyles(themedStyles);
-
   const router = useRouter();
   const headerHeight = useHeaderHeight();
 
-  const [name, setName] = React.useState<string>();
-  const [price, setPrice] = React.useState<string>();
-  const [quantity, setQuantity] = React.useState<string>();
+  const [name, price, quantity, disabled] = useProductForm();
 
-  const [isValidName, nameError] = useValidation(name, nameValidation);
-  const [isValidPrice, priceError] = useValidation(price, priceValidation);
-  const [isValidQuantity, quantityError] = useValidation(
-    quantity,
-    quantityValidation,
+  const [searchTerm, setSearchTerm] = useState<string>();
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortField, setSortField] = useState<keyof Product | undefined>(
+    undefined,
   );
 
-  const [searchText, setSearchText] = React.useState<string>();
-  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
-  const [selectedField, setSelectedField] = React.useState<
-    keyof Product | undefined
-  >(undefined);
+  const [products, dispatch] = useProducts(sampleProducts);
 
-  const [products, setProducts] = React.useState(sampleProducts);
-  const filteredProducts = usePropFilter(products, 'name', searchText);
-  const sortedProducts = usePropSort(
-    filteredProducts,
-    sortOrder,
-    selectedField,
+  const filtered = useFilter(products, 'name', searchTerm);
+  const sorted = useSort(filtered, sortOrder, sortField);
+
+  async function onAdd() {
+    if (name.value && price.value && quantity.value) {
+      dispatch(add(name.value, price.value, quantity.value));
+    }
+  }
+
+  async function onReorder(fromIndex: number, toIndex: number) {
+    if (isEmpty(searchTerm) && isEmpty(sortField)) {
+      dispatch(reorder(fromIndex, toIndex));
+    }
+  }
+
+  const onRemove = useCallback(
+    (id: Product['id']) => dispatch(remove(id)),
+    [dispatch],
   );
 
-  const onAdd = () => {
-    console.log({
-      name,
-      price,
-      quantity,
-    });
-  };
-
-  const onPressSettingsIcon = React.useCallback(() => {
-    router.push('/settings');
-  }, []);
-
-  const onChangePrice = React.useCallback(
-    (value: string) =>
-      setPrice(!/,/g.test(value) ? value : value.replaceAll(/,/g, '.')),
-    [],
+  const onIncreaseQuantity = useCallback(
+    (id: Product['id']) => dispatch(increaseQuantity(id)),
+    [dispatch],
   );
 
-  const onReorderProducts = React.useCallback(
-    async (fromIndex: number, toIndex: number) => {
-      setProducts((prev) => {
-        const copy = [...prev];
-        const removed = copy.splice(fromIndex, 1);
-        copy.splice(toIndex, 0, removed[0]);
-        return copy;
-      });
-    },
-    [],
+  const onDecreaseQuantity = useCallback(
+    (id: Product['id']) => dispatch(decreaseQuantity(id)),
+    [dispatch],
   );
-
-  const onDeleteItem = React.useCallback((id: Product['id']) => id, []);
-  const onIncreaseQuantity = React.useCallback((id: Product['id']) => id, []);
-  const onDecreaseQuantity = React.useCallback((id: Product['id']) => id, []);
 
   return (
     <View style={styles.container}>
@@ -167,36 +83,36 @@ export default function Products() {
               name="three-bars"
               size={20}
               color={theme.secondary}
-              onPress={onPressSettingsIcon}
+              onPress={() => router.push('/settings')}
             />
           ),
           headerSearchBarOptions: {
             placeholder: 'Buscar produto',
-            onChangeText: (event) => setSearchText(event.nativeEvent.text),
+            onChangeText: (event) => setSearchTerm(event.nativeEvent.text),
           },
         }}
       />
       <View style={[styles.addForm, { marginTop: headerHeight }]}>
         <Input
           containerStyle={styles.inputStyle}
-          value={name}
-          error={nameError}
-          onChangeText={setName}
+          value={name.value}
+          error={name.error}
+          onChangeText={name.onChange}
           placeholder="Nome do produto"
         />
         <Input
           containerStyle={styles.inputStyle}
-          value={price}
-          error={priceError}
-          onChangeText={onChangePrice}
+          value={price.value}
+          error={price.error}
+          onChangeText={price.onChange}
           placeholder="Valor do produto"
           keyboardType={Platform.OS === 'ios' ? 'decimal-pad' : 'numeric'}
         />
         <Input
           containerStyle={styles.inputStyle}
-          value={quantity}
-          error={quantityError}
-          onChangeText={setQuantity}
+          value={quantity.value}
+          error={quantity.error}
+          onChangeText={quantity.onChange}
           placeholder="Quantidade de produtos"
           keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
         />
@@ -205,19 +121,19 @@ export default function Products() {
           labelStyle={styles.addButtonText}
           containerStyle={styles.addButton}
           onPress={onAdd}
-          disabled={!isValidName || !isValidPrice || !isValidQuantity}
+          disabled={disabled}
         />
       </View>
       <ProductList
-        products={sortedProducts}
+        products={sorted}
         sortOrder={sortOrder}
-        selectedField={selectedField}
-        onDeleteItem={onDeleteItem}
+        sortField={sortField}
+        setSortOrder={setSortOrder}
+        setSortField={setSortField}
+        onRemove={onRemove}
+        onReorder={onReorder}
         onIncreaseQuantity={onIncreaseQuantity}
         onDecreaseQuantity={onDecreaseQuantity}
-        onReorderProducts={onReorderProducts}
-        setSelectedField={setSelectedField}
-        setSortOrder={setSortOrder}
       />
     </View>
   );
@@ -250,3 +166,76 @@ const themedStyles = createStyles((theme) =>
     },
   }),
 );
+
+type FormField = {
+  error: string;
+  value?: string;
+  onChange: (text: string) => void;
+};
+
+type UseProductForm = [FormField, FormField, FormField, boolean];
+
+function useProductForm(): UseProductForm {
+  const isRequired = useRef({
+    validate: (value: string) => value.length > 0,
+  }).current;
+
+  const isNumber = useRef({
+    errorMessage: 'Campo deve ser um número válido',
+    validate: (value: string) => !isNaN(+value),
+  }).current;
+
+  const isIntegral = useRef({
+    errorMessage: 'Campo deve ser um número inteiro',
+    validate: (value: string) => !/[,|\\.]/g.test(value),
+  }).current;
+
+  const isNotZero = useRef({
+    errorMessage: 'Campo não pode ser 0',
+    validate: (value: string) => +value > 0,
+  }).current;
+
+  const [name, setName] = useState<string>();
+  const [isNameValid, nameError] = useValidation(name, [isRequired]);
+
+  const nameField: FormField = {
+    value: name,
+    error: nameError,
+    onChange: setName,
+  };
+
+  const [price, setPrice] = useState<string>();
+  const [isPriceValid, priceError] = useValidation(price, [
+    isRequired,
+    isNumber,
+  ]);
+
+  const onPriceChange = React.useCallback(
+    (value: string) =>
+      setPrice(!/,/g.test(value) ? value : value.replaceAll(/,/g, '.')),
+    [],
+  );
+
+  const priceField: FormField = {
+    value: price,
+    error: priceError,
+    onChange: onPriceChange,
+  };
+
+  const [quantity, setQuantity] = useState<string>();
+  const [isQuantityValid, quantityError] = useValidation(quantity, [
+    isRequired,
+    isNumber,
+    isIntegral,
+    isNotZero,
+  ]);
+
+  const quantityField: FormField = {
+    value: quantity,
+    error: quantityError,
+    onChange: setQuantity,
+  };
+
+  const disabled = !isNameValid || !isPriceValid || !isQuantityValid;
+  return [nameField, priceField, quantityField, disabled];
+}

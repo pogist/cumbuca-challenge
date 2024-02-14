@@ -1,6 +1,6 @@
 import { isEmpty } from '@util';
 
-export function usePropSort<T extends object>(
+export function useSort<T extends object>(
   list: T[],
   order: 'asc' | 'desc',
   prop?: keyof T,
