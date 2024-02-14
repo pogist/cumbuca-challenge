@@ -2,6 +2,7 @@ import Button from '@components/Button';
 import Input from '@components/Input';
 import { useValidation } from '@hooks';
 import { createStyles, useStyles } from '@theming';
+import { isCPF } from '@util';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -22,15 +23,15 @@ export default function Login() {
 
   const [isCPFValid, cpfError] = useValidation(cpf, [
     {
+      validate: isCPF,
       errorMessage: 'CPF inválido',
-      validate: (value) => !(value.length < 11),
     },
   ]);
 
   const [isPasswordValid, passwordError] = useValidation(password, [
     {
-      errorMessage: 'Mínimo de 8 caracteres',
       validate: (value) => value.length >= 8,
+      errorMessage: 'Mínimo de 8 caracteres',
     },
   ]);
 
