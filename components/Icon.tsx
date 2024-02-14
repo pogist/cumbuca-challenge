@@ -6,22 +6,30 @@ import {
   StyleProp,
   StyleSheet,
   ViewStyle,
+  TextStyle,
 } from 'react-native';
 
 export interface IconProps {
   name: React.ComponentProps<typeof Octicons>['name'];
-  size: number;
   color?: ColorValue;
-  onPress?: () => void;
+  containerStyle?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  size?: number;
+  style?: StyleProp<TextStyle>;
+  onPress?: () => void;
 }
 
-const Icon: React.FC<IconProps> = ({ onPress, disabled, ...props }) => {
-  const containerStyle = ({ pressed }: { pressed: boolean }) => {
-    const style: StyleProp<ViewStyle> = [
-      styles.container,
-      { width: props.size },
-    ];
+const Icon: React.FC<IconProps> = ({
+  containerStyle,
+  disabled,
+  onPress,
+  ...props
+}) => {
+  const pressableStyle = ({ pressed }: { pressed: boolean }) => {
+    const style: StyleProp<ViewStyle> = [styles.container, containerStyle];
+    if (props.size && (!props.style || !containerStyle)) {
+      style.push({ width: props.size });
+    }
     if (disabled) {
       style.push(styles.disabled);
     } else if (pressed) {
@@ -30,7 +38,7 @@ const Icon: React.FC<IconProps> = ({ onPress, disabled, ...props }) => {
     return style;
   };
   return (
-    <Pressable style={containerStyle} onPress={onPress} disabled={disabled}>
+    <Pressable style={pressableStyle} onPress={onPress} disabled={disabled}>
       <Octicons {...props} />
     </Pressable>
   );

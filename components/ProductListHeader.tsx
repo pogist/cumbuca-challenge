@@ -3,6 +3,9 @@ import { Product } from '@types';
 import React, { useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native';
 
+import Icon from './Icon';
+
+type SortOrder = 'asc' | 'desc';
 type ProductField = keyof Product | undefined;
 
 type ProductListHeaderItemData = {
@@ -11,12 +14,16 @@ type ProductListHeaderItemData = {
 };
 
 export interface ProductListHeaderProps {
+  sortOrder: SortOrder;
   selectedField: ProductField;
+  setSortOrder: (update: (order: SortOrder) => SortOrder) => void;
   setSelectedField: (update: (field: ProductField) => ProductField) => void;
 }
 
 export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
+  sortOrder,
   selectedField,
+  setSortOrder,
   setSelectedField,
 }) => {
   const styles = useStyles(themedStyles);
@@ -46,6 +53,10 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
     );
   };
 
+  const toggleSortOrder = React.useCallback(() => {
+    setSortOrder((order) => (order === 'asc' ? 'desc' : 'asc'));
+  }, []);
+
   return (
     <View style={styles.container}>
       {Object.keys(fields).map((field) =>
@@ -54,6 +65,12 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
           title: fields[field as NonNullable<ProductField>],
         }),
       )}
+      <Icon
+        onPress={toggleSortOrder}
+        name={sortOrder === 'asc' ? 'sort-asc' : 'sort-desc'}
+        style={styles.icon}
+        containerStyle={styles.item}
+      />
     </View>
   );
 };
@@ -86,7 +103,6 @@ const themedStyles = createStyles((theme) =>
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'space-around',
-      backgroundColor: theme.background,
     },
     itemContainer: {
       alignItems: 'center',
@@ -94,6 +110,10 @@ const themedStyles = createStyles((theme) =>
     },
     item: {
       paddingHorizontal: 3,
+    },
+    icon: {
+      color: theme.primary,
+      fontSize: 18,
     },
     baseItemText: {
       fontSize: 15,

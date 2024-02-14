@@ -2,7 +2,12 @@ import Button from '@components/Button';
 import Icon from '@components/Icon';
 import Input from '@components/Input';
 import { ProductList } from '@components/ProductList';
-import { useHeaderHeight, useValidation } from '@hooks';
+import {
+  useHeaderHeight,
+  usePropFilter,
+  usePropSort,
+  useValidation,
+} from '@hooks';
 import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
 import { Stack, useRouter } from 'expo-router';
@@ -45,34 +50,40 @@ const sampleProducts: Product[] = [
     quantity: 5,
     totalPrice: 8 * 5,
   },
+  {
+    id: 6,
+    name: 'Carro',
+    price: 8,
+    quantity: 5,
+    totalPrice: 8 * 5,
+  },
+  {
+    id: 7,
+    name: 'Carreta',
+    price: 8,
+    quantity: 5,
+    totalPrice: 8 * 5,
+  },
 ];
-
-const isNumber = {
-  errorMessage: 'Não é um número válido',
-  validate: (value: string) => !isNaN(+value),
-};
 
 const isRequired = {
   errorMessage: 'Campo obrigatório',
   validate: (value: string) => value.length > 0,
 };
 
-const nameValidation = [isRequired];
+const isNumber = {
+  errorMessage: 'Campo deve ser um número válido',
+  validate: (value: string) => !isNaN(+value),
+};
 
-const priceValidation = [
-  isRequired,
-  isNumber,
-  {
-    errorMessage: 'Campo não pode ser negativo',
-    validate: (value: string) => +value >= 0,
-  },
-];
+const nameValidation = [isRequired];
+const priceValidation = [isRequired, isNumber];
 
 const quantityValidation = [
   isRequired,
   isNumber,
   {
-    errorMessage: 'Campo deve ser inteiro',
+    errorMessage: 'Campo deve ser um número inteiro',
     validate: (value: string) => !/[,|\\.]/g.test(value),
   },
   {
@@ -82,19 +93,11 @@ const quantityValidation = [
 ];
 
 export default function Products() {
-  const router = useRouter();
-  const headerHeight = useHeaderHeight();
-
   const theme = useTheme();
   const styles = useStyles(themedStyles);
 
-  const [products, setProducts] = React.useState(sampleProducts);
-
-  const [selectedField, setSelectedField] = React.useState<
-    keyof Product | undefined
-  >(undefined);
-
-  const [searchText, setSearchText] = React.useState<string>();
+  const router = useRouter();
+  const headerHeight = useHeaderHeight();
 
   const [name, setName] = React.useState<string>();
   const [price, setPrice] = React.useState<string>();
@@ -105,6 +108,20 @@ export default function Products() {
   const [isValidQuantity, quantityError] = useValidation(
     quantity,
     quantityValidation,
+  );
+
+  const [searchText, setSearchText] = React.useState<string>();
+  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
+  const [selectedField, setSelectedField] = React.useState<
+    keyof Product | undefined
+  >(undefined);
+
+  const [products, setProducts] = React.useState(sampleProducts);
+  const filteredProducts = usePropFilter(products, 'name', searchText);
+  const sortedProducts = usePropSort(
+    filteredProducts,
+    sortOrder,
+    selectedField,
   );
 
   const onAdd = () => {
@@ -154,6 +171,7 @@ export default function Products() {
             />
           ),
           headerSearchBarOptions: {
+            placeholder: 'Buscar produto',
             onChangeText: (event) => setSearchText(event.nativeEvent.text),
           },
         }}
@@ -191,13 +209,15 @@ export default function Products() {
         />
       </View>
       <ProductList
-        products={products}
+        products={sortedProducts}
+        sortOrder={sortOrder}
         selectedField={selectedField}
         onDeleteItem={onDeleteItem}
         onIncreaseQuantity={onIncreaseQuantity}
         onDecreaseQuantity={onDecreaseQuantity}
         onReorderProducts={onReorderProducts}
         setSelectedField={setSelectedField}
+        setSortOrder={setSortOrder}
       />
     </View>
   );

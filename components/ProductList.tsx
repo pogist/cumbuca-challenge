@@ -8,26 +8,31 @@ import DragList, { DragListRenderItemInfo } from './DragList';
 import Icon from './Icon';
 import { ProductListHeader } from './ProductListHeader';
 
+type SortOrder = 'asc' | 'desc';
 type ProductField = keyof Product | undefined;
 
 export interface ProductListProps {
   products: Product[];
+  sortOrder: SortOrder;
   selectedField: ProductField;
   onDecreaseQuantity: (id: Product['id']) => void;
   onDeleteItem: (id: Product['id']) => void;
   onIncreaseQuantity: (id: Product['id']) => void;
   onReorderProducts: (fromIndex: number, toIndex: number) => Promise<void>;
   setSelectedField: (update: (field: ProductField) => ProductField) => void;
+  setSortOrder: (update: (order: SortOrder) => SortOrder) => void;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
+  sortOrder,
   selectedField,
-  setSelectedField,
   onDeleteItem,
   onIncreaseQuantity,
   onReorderProducts,
   onDecreaseQuantity,
+  setSelectedField,
+  setSortOrder,
 }) => {
   const styles = useStyles(themedStyles);
 
@@ -54,8 +59,10 @@ export const ProductList: React.FC<ProductListProps> = ({
   return (
     <View style={styles.container}>
       <ProductListHeader
+        sortOrder={sortOrder}
         selectedField={selectedField}
         setSelectedField={setSelectedField}
+        setSortOrder={setSortOrder}
       />
       <DragList
         containerStyle={styles.container}
@@ -99,10 +106,7 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
   const quantity = useNumberFormat(product.quantity);
 
   return (
-    <Pressable
-      delayLongPress={200}
-      onLongPress={onDragStart}
-      onPressOut={onDragEnd}>
+    <Pressable onLongPress={onDragStart} onPressOut={onDragEnd}>
       <View style={[styles.item, isActive ? styles.itemPressed : {}]}>
         <View style={styles.itemHeader}>
           <View style={styles.itemTitlePriceContainer}>
