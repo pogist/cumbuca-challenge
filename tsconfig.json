@@ -14,9 +14,6 @@
       "@hooks": [
         "hooks/index"
       ],
-      "@hooks/*": [
-        "hooks/*",
-      ],
       "@theming": [
         "theming/index"
       ],

@@ -1,6 +1,6 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
-import { useValidation } from '@hooks/form';
+import { useValidation } from '@hooks';
 import { createStyles, useStyles } from '@theming';
 import { useRouter } from 'expo-router';
 import React from 'react';

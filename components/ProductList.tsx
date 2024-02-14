@@ -1,4 +1,4 @@
-import { useCurrencyFormat, useNumberFormat } from '@hooks/product';
+import { useCurrencyFormat, useNumberFormat } from '@hooks';
 import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
 import React from 'react';

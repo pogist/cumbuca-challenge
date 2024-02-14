@@ -1,7 +1,6 @@
-import { useProductFields } from '@hooks/product';
 import { createStyles, useStyles } from '@theming';
 import { Product } from '@types';
-import React from 'react';
+import React, { useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextStyle, View } from 'react-native';
 
 type ProductField = keyof Product | undefined;
@@ -20,8 +19,14 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
   selectedField,
   setSelectedField,
 }) => {
-  const fields = useProductFields();
   const styles = useStyles(themedStyles);
+  const fields = useRef({
+    id: 'ID',
+    name: 'Produto',
+    price: 'Valor',
+    quantity: 'Quantidade',
+    totalPrice: 'Total',
+  }).current;
 
   const renderItem = (item: ProductListHeaderItemData) => {
     const onPress = () =>
