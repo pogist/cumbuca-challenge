@@ -1,5 +1,5 @@
+import Icon from '@components/Icon';
 import Switch from '@components/Switch';
-import { Ionicons } from '@expo/vector-icons';
 import { createStyles, useStyles, useTheme } from '@theming';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -31,7 +31,7 @@ export default function Settings() {
         <View style={styles.optionInfo}>
           <View style={styles.optionTitleContainer}>
             <Text style={styles.optionTitle}>Tema escuro</Text>
-            <Ionicons style={styles.optionTitle} name="moon" />
+            <Icon style={styles.optionTitle} name="moon" disabled noFeedback />
           </View>
           <Text style={styles.optionDesc}>
             Habilite/desabilite o tema escuro

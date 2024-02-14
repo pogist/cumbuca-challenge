@@ -14,6 +14,7 @@ export interface IconProps {
   color?: ColorValue;
   containerStyle?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  noFeedback?: boolean;
   size?: number;
   style?: StyleProp<TextStyle>;
   onPress?: () => void;
@@ -22,6 +23,7 @@ export interface IconProps {
 const Icon: React.FC<IconProps> = ({
   containerStyle,
   disabled,
+  noFeedback,
   onPress,
   ...props
 }) => {
@@ -29,6 +31,9 @@ const Icon: React.FC<IconProps> = ({
     const style: StyleProp<ViewStyle> = [styles.container, containerStyle];
     if (props.size && (!props.style || !containerStyle)) {
       style.push({ width: props.size });
+    }
+    if (noFeedback) {
+      return style;
     }
     if (disabled) {
       style.push(styles.disabled);
