@@ -2,6 +2,7 @@ import { Octicons } from '@expo/vector-icons';
 import settings from '@storage/settings';
 import { ThemeProvider, darkTheme, lightTheme } from '@theming';
 import * as Font from 'expo-font';
+import * as LocalAuthentication from 'expo-local-authentication';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { Appearance, useColorScheme } from 'react-native';
@@ -16,6 +17,9 @@ export default function AppLayout() {
 
   React.useEffect(() => {
     loadIcons();
+    LocalAuthentication.isEnrolledAsync().then((isEnrolled) => {
+      settings.setHasBioAuthSupport(isEnrolled);
+    });
     settings.getDarkTheme().then((isDarkTheme) => {
       if (isDarkTheme) {
         Appearance.setColorScheme('dark');

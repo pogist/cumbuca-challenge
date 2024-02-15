@@ -1,8 +1,10 @@
 import Button from '@components/Button';
 import Input from '@components/Input';
 import { useValidation } from '@hooks';
+import settings from '@storage/settings';
 import { createStyles, useStyles } from '@theming';
 import { compose, isCPF, isEmpty, replace } from '@util';
+import * as LocalAuthentication from 'expo-local-authentication';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -17,6 +19,18 @@ import {
 export default function Login() {
   const router = useRouter();
   const styles = useStyles(themedStyles);
+
+  React.useEffect(() => {
+    settings.getBioAuth().then((enabled) => {
+      if (enabled) {
+        LocalAuthentication.authenticateAsync().then((result) => {
+          if (result.success) {
+            router.push('/products');
+          }
+        });
+      }
+    });
+  }, [router]);
 
   const [cpf, setCPF] = React.useState<string>();
   const [password, setPassword] = React.useState<string>();

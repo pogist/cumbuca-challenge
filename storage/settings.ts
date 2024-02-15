@@ -4,8 +4,9 @@ import { isNullable } from '@util';
 const SETTINGS = '@settings';
 
 export type SettingsObject = {
-  bioAuth: boolean;
   darkTheme: boolean;
+  bioAuth: boolean;
+  hasBioAuthSupport: boolean;
 };
 
 async function set(settings: SettingsObject) {
@@ -20,22 +21,10 @@ async function get(): Promise<SettingsObject | null> {
   return JSON.parse(value);
 }
 
-async function setBioAuth(enabled: boolean): Promise<boolean> {
-  const currentSettings = await get();
-  if (isNullable(currentSettings)) {
-    await set({ bioAuth: enabled, darkTheme: false });
-  } else {
-    if (currentSettings.bioAuth !== enabled) {
-      await set({ ...currentSettings, bioAuth: enabled });
-    }
-  }
-  return enabled;
-}
-
 async function setDarkTheme(enabled: boolean): Promise<boolean> {
   const currentSettings = await get();
   if (isNullable(currentSettings)) {
-    await set({ bioAuth: false, darkTheme: enabled });
+    await set({ darkTheme: enabled, bioAuth: false, hasBioAuthSupport: false });
   } else {
     if (currentSettings.darkTheme !== enabled) {
       await set({ ...currentSettings, darkTheme: enabled });
@@ -44,12 +33,32 @@ async function setDarkTheme(enabled: boolean): Promise<boolean> {
   return enabled;
 }
 
-async function getBioAuth(): Promise<boolean> {
+async function setBioAuth(enabled: boolean): Promise<boolean> {
   const currentSettings = await get();
   if (isNullable(currentSettings)) {
-    return false;
+    await set({ darkTheme: false, bioAuth: enabled, hasBioAuthSupport: false });
+  } else {
+    if (currentSettings.bioAuth !== enabled) {
+      await set({ ...currentSettings, bioAuth: enabled });
+    }
   }
-  return currentSettings.bioAuth;
+  return enabled;
+}
+
+async function setHasBioAuthSupport(support: boolean): Promise<boolean> {
+  const currentSettings = await get();
+  if (isNullable(currentSettings)) {
+    await set({
+      darkTheme: false,
+      bioAuth: false,
+      hasBioAuthSupport: support,
+    });
+  } else {
+    if (currentSettings.hasBioAuthSupport !== support) {
+      await set({ ...currentSettings, hasBioAuthSupport: support });
+    }
+  }
+  return support;
 }
 
 async function getDarkTheme(): Promise<boolean> {
@@ -60,4 +69,27 @@ async function getDarkTheme(): Promise<boolean> {
   return currentSettings.darkTheme;
 }
 
-export default { setBioAuth, getBioAuth, setDarkTheme, getDarkTheme };
+async function getBioAuth(): Promise<boolean> {
+  const currentSettings = await get();
+  if (isNullable(currentSettings)) {
+    return false;
+  }
+  return currentSettings.bioAuth;
+}
+
+async function hasBioAuthSupport(): Promise<boolean> {
+  const currentSettings = await get();
+  if (isNullable(currentSettings)) {
+    return false;
+  }
+  return currentSettings.hasBioAuthSupport;
+}
+
+export default {
+  getDarkTheme,
+  getBioAuth,
+  hasBioAuthSupport,
+  setDarkTheme,
+  setBioAuth,
+  setHasBioAuthSupport,
+};

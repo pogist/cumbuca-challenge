@@ -9,12 +9,14 @@ export default function Settings() {
   const theme = useTheme();
   const styles = useStyles(themedStyles);
 
-  const [bioAuth, setBioAuth] = React.useState(false);
   const [darkTheme, setDarkTheme] = React.useState(false);
+  const [bioAuth, setBioAuth] = React.useState(false);
+  const [hasBioAuthSupport, setHasBioAuthSupport] = React.useState(false);
 
   useEffect(() => {
-    settings.getBioAuth().then(setBioAuth);
     settings.getDarkTheme().then(setDarkTheme);
+    settings.getBioAuth().then(setBioAuth);
+    settings.hasBioAuthSupport().then(setHasBioAuthSupport);
   }, []);
 
   useEffect(() => {
@@ -33,20 +35,22 @@ export default function Settings() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.option}>
-        <View style={styles.optionInfo}>
-          <Text style={styles.optionTitle}>Biometria</Text>
-          <Text style={styles.optionDesc}>
-            Habilite/desabilite o login por biometria
-          </Text>
+      {hasBioAuthSupport && (
+        <View style={styles.option}>
+          <View style={styles.optionInfo}>
+            <Text style={styles.optionTitle}>Biometria</Text>
+            <Text style={styles.optionDesc}>
+              Habilite/desabilite login por biometria
+            </Text>
+          </View>
+          <Switch
+            value={bioAuth}
+            onValueChange={() => setBioAuth((prev) => !prev)}
+            trueColor={theme.primary}
+            falseColor={theme.border}
+          />
         </View>
-        <Switch
-          value={bioAuth}
-          onValueChange={() => setBioAuth((prev) => !prev)}
-          trueColor={theme.primary}
-          falseColor={theme.border}
-        />
-      </View>
+      )}
       <View style={styles.option}>
         <View style={styles.optionInfo}>
           <View style={styles.optionTitleContainer}>
