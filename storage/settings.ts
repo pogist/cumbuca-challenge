@@ -10,7 +10,6 @@ export type SettingsObject = {
 
 async function set(settings: SettingsObject) {
   await AsyncStorage.setItem(SETTINGS, JSON.stringify(settings));
-  console.log(settings);
 }
 
 async function get(): Promise<SettingsObject | null> {

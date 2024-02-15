@@ -2,7 +2,7 @@ import Button from '@components/Button';
 import Input from '@components/Input';
 import { useValidation } from '@hooks';
 import { createStyles, useStyles } from '@theming';
-import { isCPF, compose, replace } from '@util';
+import { compose, isCPF, isEmpty, replace } from '@util';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -63,7 +63,7 @@ export default function Login() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
             value={cpf}
-            error={cpfError}
+            error={!isEmpty(cpf) ? cpfError : ''}
             onChangeText={setMaskedCPF}
             label="CPF"
             placeholder="000.000.000-00"
@@ -72,7 +72,7 @@ export default function Login() {
           />
           <Input
             value={password}
-            error={passwordError}
+            error={!isEmpty(password) ? passwordError : ''}
             onChangeText={setPassword}
             label="Senha"
             placeholder="Digite sua senha..."
