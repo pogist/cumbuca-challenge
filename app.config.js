@@ -27,17 +27,6 @@ module.exports = withNoAPSEntitlement({
   },
   plugins: [
     [
-      'expo-build-properties',
-      {
-        ios: {
-          newArchEnabled: true,
-        },
-        android: {
-          newArchEnabled: true,
-        },
-      },
-    ],
-    [
       'expo-local-authentication',
       {
         faceIDPermission: 'Allow $(PRODUCT_NAME) to use Face ID.',
