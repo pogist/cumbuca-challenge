@@ -17,10 +17,10 @@ export function useSort<T extends object>(
         const lhsUpper = lhsValue.toUpperCase();
         const rhsUpper = rhsValue.toUpperCase();
         if (lhsUpper < rhsUpper) {
-          return -1;
+          return order === 'asc' ? -1 : 1;
         }
         if (lhsUpper > rhsUpper) {
-          return 1;
+          return order === 'asc' ? 1 : -1;
         }
       }
       return 0;
