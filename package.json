@@ -9,7 +9,13 @@
     "ios": "expo run:ios",
     "lint": "eslint .",
     "ts:check": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "detox:ios": "detox test --configuration ios.sim.release",
+    "detox:ios:debug": "detox test --configuration ios.sim.debug",
+    "detox:build:ios": "detox build --configuration ios.sim.release",
+    "detox:build:ios:debug": "detox build --configuration ios.sim.debug",
+    "detox:android": "detox test --configuration android.emu.release",
+    "detox:build:android": "detox build --configuration android.emu.release"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.21.0",
@@ -32,9 +38,12 @@
     "@babel/core": "^7.20.0",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.2.45",
+    "detox": "^20.18.1",
+    "detox-cli": "^20.0.0",
     "eslint": "^8.56.0",
     "eslint-config-universe": "^12.0.0",
     "prettier": "^3.2.5",
+    "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
   },
   "jest": {

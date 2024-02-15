@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 export interface ButtonProps {
+  testID: string;
   label: string;
   onPress?: () => void;
   disabled?: boolean;
@@ -16,6 +17,7 @@ export interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({
+  testID,
   label,
   onPress,
   disabled,
@@ -39,8 +41,14 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <Pressable style={containerStyle} onPress={onPress} disabled={disabled}>
-      <Text style={labelStyle}>{label}</Text>
+    <Pressable
+      testID={testID}
+      style={containerStyle}
+      onPress={onPress}
+      disabled={disabled}>
+      <Text testID={`${testID}.label`} style={labelStyle}>
+        {label}
+      </Text>
     </Pressable>
   );
 };

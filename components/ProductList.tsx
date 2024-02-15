@@ -12,6 +12,7 @@ type SortOrder = 'asc' | 'desc';
 type SortField = keyof Product | undefined;
 
 export interface ProductListProps {
+  testID: string;
   products: Product[];
   sortOrder: SortOrder;
   sortField: SortField;
@@ -24,6 +25,7 @@ export interface ProductListProps {
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
+  testID,
   products,
   sortOrder,
   sortField,
@@ -44,6 +46,7 @@ export const ProductList: React.FC<ProductListProps> = ({
       onDragEnd,
     }: DragListRenderItemInfo<Product>) => (
       <ProductListItem
+        testID={`${testID}.item-${item.name}-${item.id}`}
         product={item}
         isActive={isActive}
         onDragStart={onDragStart}
@@ -57,14 +60,16 @@ export const ProductList: React.FC<ProductListProps> = ({
   );
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       <ProductListHeader
+        testID={`${testID}.list-header`}
         sortOrder={sortOrder}
         sortField={sortField}
         setSortOrder={setSortOrder}
         setSortField={setSortField}
       />
       <DragList
+        testID={`${testID}.drag-list`}
         containerStyle={styles.container}
         data={products}
         renderItem={renderItem}
@@ -76,10 +81,11 @@ export const ProductList: React.FC<ProductListProps> = ({
 };
 
 function keyExtractor(item: Product) {
-  return `${item.name}_${item.id}`;
+  return `${item.name}-${item.id}`;
 }
 
 export interface ProductListItemProps {
+  testID: string;
   product: Product;
   isActive: boolean;
   onDragStart: () => void;
@@ -90,6 +96,7 @@ export interface ProductListItemProps {
 }
 
 export const ProductListItem: React.FC<ProductListItemProps> = ({
+  testID,
   product,
   isActive,
   onDragStart,
@@ -106,37 +113,64 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
   const quantity = useNumberFormat(product.quantity);
 
   return (
-    <Pressable onLongPress={onDragStart} onPressOut={onDragEnd}>
-      <View style={[styles.item, isActive ? styles.itemPressed : {}]}>
-        <View style={styles.itemHeader}>
-          <View style={styles.itemTitlePriceContainer}>
-            <View style={styles.itemTitleIDContainer}>
-              <Text style={styles.itemTitle}>{product.name}</Text>
-              <Text style={styles.itemID}>(ID: {product.id})</Text>
+    <Pressable testID={testID} onLongPress={onDragStart} onPressOut={onDragEnd}>
+      <View
+        testID={`${testID}.container`}
+        style={[styles.item, isActive ? styles.itemPressed : {}]}>
+        <View testID={`${testID}.header`} style={styles.itemHeader}>
+          <View
+            testID={`${testID}.name-id-price`}
+            style={styles.itemTitlePriceContainer}>
+            <View
+              testID={`${testID}.name-id`}
+              style={styles.itemTitleIDContainer}>
+              <Text testID={`${testID}.name`} style={styles.itemTitle}>
+                {product.name}
+              </Text>
+              <Text testID={`${testID}.id`} style={styles.itemID}>
+                (ID: {product.id})
+              </Text>
             </View>
-            <Text style={styles.itemPrice}>{price}</Text>
+            <Text testID={`${testID}.price`} style={styles.itemPrice}>
+              {price}
+            </Text>
           </View>
           <Icon
+            testID={`${testID}.trash`}
             name="trash"
             size={20}
             color={theme.danger}
             onPress={onRemove}
           />
         </View>
-        <View style={styles.itemFooter}>
-          <View style={styles.itemTotalContainer}>
-            <Text style={styles.itemTotalLabel}>Total:</Text>
-            <Text style={styles.itemTotal}>{totalPrice}</Text>
+        <View testID={`${testID}.footer`} style={styles.itemFooter}>
+          <View testID={`${testID}.total`} style={styles.itemTotalContainer}>
+            <Text
+              testID={`${testID}.total.label`}
+              style={styles.itemTotalLabel}>
+              Total:
+            </Text>
+            <Text testID={`${testID}.total.value`} style={styles.itemTotal}>
+              {totalPrice}
+            </Text>
           </View>
-          <View style={styles.itemQuantityContainer}>
+          <View
+            testID={`${testID}.quantity`}
+            style={styles.itemQuantityContainer}>
             <Icon
+              testID={`${testID}.quantity.dash`}
               name="dash"
               size={16}
               color={theme.secondary}
               onPress={onDecreaseQuantity}
             />
-            <Text style={styles.itemQuantity}>{quantity}</Text>
+            <Text
+              testID={`${testID}.quantity.value`}
+              style={styles.itemQuantity}>
+              {quantity}
+            </Text>
             <Icon
+              testID={`${testID}.quantity.plus`}
               name="plus"
               size={16}
               color={theme.secondary}

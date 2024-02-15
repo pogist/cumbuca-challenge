@@ -14,6 +14,7 @@ type ProductListHeaderItemData = {
 };
 
 export interface ProductListHeaderProps {
+  testID: string;
   sortOrder: SortOrder;
   sortField: SortField;
   setSortOrder: (update: (order: SortOrder) => SortOrder) => void;
@@ -21,6 +22,7 @@ export interface ProductListHeaderProps {
 }
 
 export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
+  testID,
   sortOrder,
   sortField,
   setSortOrder,
@@ -40,10 +42,12 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
       setSortField((field) => (item.field !== field ? item.field : undefined));
     return (
       <Pressable
+        testID={`${testID}.item-${item.field}.container`}
         key={item.field}
         style={styles.itemContainer}
         onPress={onPress}>
         <ProductListHeaderItem
+          testID={`${testID}.item-${item.field}`}
           title={item.title}
           isSelected={item.field === sortField}
         />
@@ -56,7 +60,7 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       {Object.keys(fields).map((field) =>
         renderItem({
           field: field as NonNullable<SortField>,
@@ -64,6 +68,7 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
         }),
       )}
       <Icon
+        testID={`${testID}.order`}
         onPress={toggleSortOrder}
         name={sortOrder === 'asc' ? 'sort-asc' : 'sort-desc'}
         style={styles.icon}
@@ -74,11 +79,13 @@ export const ProductListHeader: React.FC<ProductListHeaderProps> = ({
 };
 
 export interface ProductListHeaderItemProps {
+  testID: string;
   title: string;
   isSelected: boolean;
 }
 
 export const ProductListHeaderItem: React.FC<ProductListHeaderItemProps> = ({
+  testID,
   title,
   isSelected,
 }) => {
@@ -88,8 +95,12 @@ export const ProductListHeaderItem: React.FC<ProductListHeaderItemProps> = ({
     titleStyle.push(styles.selectedItemTitle);
   }
   return (
-    <View style={styles.item}>
-      <Text style={[styles.baseItemText, titleStyle]}>{title}</Text>
+    <View testID={testID} style={styles.item}>
+      <Text
+        testID={`${testID}.title`}
+        style={[styles.baseItemText, titleStyle]}>
+        {title}
+      </Text>
     </View>
   );
 };

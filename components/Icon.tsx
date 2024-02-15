@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 export interface IconProps {
+  testID: string;
   name: React.ComponentProps<typeof Octicons>['name'];
   color?: ColorValue;
   containerStyle?: StyleProp<ViewStyle>;
@@ -21,6 +22,7 @@ export interface IconProps {
 }
 
 const Icon: React.FC<IconProps> = ({
+  testID,
   containerStyle,
   disabled,
   noFeedback,
@@ -43,8 +45,12 @@ const Icon: React.FC<IconProps> = ({
     return style;
   };
   return (
-    <Pressable style={pressableStyle} onPress={onPress} disabled={disabled}>
-      <Octicons {...props} />
+    <Pressable
+      testID={testID}
+      style={pressableStyle}
+      onPress={onPress}
+      disabled={disabled}>
+      <Octicons testID={`${testID}.vector_icon`} {...props} />
     </Pressable>
   );
 };

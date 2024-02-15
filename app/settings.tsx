@@ -34,16 +34,19 @@ export default function Settings() {
   }, [darkThemeEnabled]);
 
   return (
-    <View style={styles.container}>
+    <View testID="settings" style={styles.container}>
       {bioAuthSupported && (
-        <View style={styles.option}>
-          <View style={styles.optionInfo}>
-            <Text style={styles.optionTitle}>Biometria</Text>
-            <Text style={styles.optionDesc}>
+        <View testID="settings.bio-auth" style={styles.option}>
+          <View testID="settings.bio-auth.info" style={styles.optionInfo}>
+            <Text testID="settings.bio-auth.title" style={styles.optionTitle}>
+              Biometria
+            </Text>
+            <Text testID="settings.bio-auth.desc" style={styles.optionDesc}>
               Habilite/desabilite login por biometria
             </Text>
           </View>
           <Switch
+            testID="settings.bio-auth.switch"
             value={bioAuthEnabled}
             onValueChange={() => setBioAuthEnabled((prev) => !prev)}
             trueColor={theme.primary}
@@ -51,17 +54,30 @@ export default function Settings() {
           />
         </View>
       )}
-      <View style={styles.option}>
-        <View style={styles.optionInfo}>
-          <View style={styles.optionTitleContainer}>
-            <Text style={styles.optionTitle}>Tema escuro</Text>
-            <Icon style={styles.optionTitle} name="moon" disabled noFeedback />
+      <View testID="settings.dark-theme" style={styles.option}>
+        <View testID="settings.dark-theme.info" style={styles.optionInfo}>
+          <View
+            testID="settings.dark-theme.title"
+            style={styles.optionTitleContainer}>
+            <Text
+              testID="settings.dark-theme.title.value"
+              style={styles.optionTitle}>
+              Tema escuro
+            </Text>
+            <Icon
+              testID="settings.dark-theme.title.moon"
+              style={styles.optionTitle}
+              name="moon"
+              disabled
+              noFeedback
+            />
           </View>
-          <Text style={styles.optionDesc}>
+          <Text testID="settings.dark-theme.desc" style={styles.optionDesc}>
             Habilite/desabilite o tema escuro
           </Text>
         </View>
         <Switch
+          testID="settings.dark-theme.switch"
           value={darkThemeEnabled}
           onValueChange={() => setDarkThemeEnabled((prev) => !prev)}
           trueColor={theme.primary}

@@ -21,13 +21,13 @@ export default function Login() {
   const router = useRouter();
   const styles = useStyles(themedStyles);
 
-  const [lastAccess, setLastAccess] = React.useState<string>();
+  const [lastAccessed, setLastAccessed] = React.useState<string>();
 
   React.useEffect(() => {
     async function setLastAccessFromStorage() {
       const login = await loginStorage.get();
       if (!isNullable(login)) {
-        setLastAccess(login.lastAccessedAt.toISOString());
+        setLastAccessed(login.lastAccessedAt.toISOString());
       }
     }
     async function handleBioAuth() {
@@ -118,15 +118,20 @@ export default function Login() {
 
   return (
     <ScrollView
+      testID="login"
       bounces={false}
       contentContainerStyle={styles.scrollViewContent}
       keyboardShouldPersistTaps="handled">
-      <View style={styles.container}>
-        <Text style={styles.header}>Login</Text>
+      <View testID="login.container" style={styles.container}>
+        <Text testID="login.header" style={styles.header}>
+          Login
+        </Text>
         <KeyboardAvoidingView
+          testID="login.kbavoidingview"
           style={styles.form}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Input
+            testID="login.cpf"
             value={cpf}
             error={
               cpfLoginError ? cpfLoginError : !isEmpty(cpf) ? cpfError : ''
@@ -138,6 +143,7 @@ export default function Login() {
             maxLength={14}
           />
           <Input
+            testID="login.password"
             value={password}
             error={
               passwordLoginError
@@ -154,28 +160,39 @@ export default function Login() {
         </KeyboardAvoidingView>
         <View style={styles.loginContainer}>
           <Button
+            testID="login.submit"
             label="LOGIN"
             onPress={onLogin}
             disabled={!isCPFValid || !isPasswordValid}
             labelStyle={styles.buttonLabel}
             containerStyle={styles.buttonContainer}
           />
-          {lastAccess && <LastAccessLabel dateString={lastAccess} />}
+          {lastAccessed && (
+            <LastAccessed
+              testID="login.last_accessed"
+              dateString={lastAccessed}
+            />
+          )}
         </View>
       </View>
     </ScrollView>
   );
 }
 
-function LastAccessLabel({ dateString }: { dateString: string }) {
+interface LastAccessedProps {
+  testID: string;
+  dateString: string;
+}
+
+function LastAccessed({ testID, dateString }: LastAccessedProps) {
   const styles = useStyles(themedStyles);
   const getDate = (): string =>
     new Date(dateString).toLocaleDateString('pt-BR');
   const getTime = (): string =>
     new Date(dateString).toLocaleTimeString('pt-BR');
   return (
-    <View style={styles.lastAccessContainer}>
-      <Text style={styles.lastAccessLabel}>
+    <View testID={testID} style={styles.lastAccessContainer}>
+      <Text testID={`${testID}.text`} style={styles.lastAccessLabel}>
         Último accesso em {getDate()} às {getTime()}
       </Text>
     </View>

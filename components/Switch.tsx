@@ -2,6 +2,7 @@ import React from 'react';
 import { ColorValue, Platform, Switch as RNSwitch } from 'react-native';
 
 export interface SwitchProps {
+  testID: string;
   value: boolean;
   onValueChange: (newValue: boolean) => void;
   trueColor: ColorValue;
@@ -9,6 +10,7 @@ export interface SwitchProps {
 }
 
 const Switch: React.FC<SwitchProps> = ({
+  testID,
   value,
   onValueChange,
   trueColor,
@@ -29,7 +31,12 @@ const Switch: React.FC<SwitchProps> = ({
     },
   });
   return (
-    <RNSwitch value={value} onValueChange={onValueChange} {...colorProps} />
+    <RNSwitch
+      testID={testID}
+      value={value}
+      onValueChange={onValueChange}
+      {...colorProps}
+    />
   );
 };
 

@@ -77,11 +77,12 @@ export default function Products() {
   );
 
   return (
-    <View style={styles.container}>
+    <View testID="products" style={styles.container}>
       <Stack.Screen
         options={{
           headerRight: () => (
             <Icon
+              testID="products.three-bars"
               name="three-bars"
               size={20}
               color={theme.secondary}
@@ -96,6 +97,7 @@ export default function Products() {
       />
       <View style={[styles.addForm, { marginTop: headerHeight }]}>
         <Input
+          testID="products.name"
           containerStyle={styles.inputStyle}
           value={name.value}
           error={name.error}
@@ -103,6 +105,7 @@ export default function Products() {
           placeholder="Nome do produto"
         />
         <Input
+          testID="products.price"
           containerStyle={styles.inputStyle}
           value={price.value}
           error={price.error}
@@ -111,6 +114,7 @@ export default function Products() {
           keyboardType={Platform.OS === 'ios' ? 'decimal-pad' : 'numeric'}
         />
         <Input
+          testID="products.quantity"
           containerStyle={styles.inputStyle}
           value={quantity.value}
           error={quantity.error}
@@ -119,6 +123,7 @@ export default function Products() {
           keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
         />
         <Button
+          testID="products.submit"
           label="Adicionar"
           labelStyle={styles.addButtonText}
           containerStyle={styles.addButton}
@@ -127,6 +132,7 @@ export default function Products() {
         />
       </View>
       <ProductList
+        testID="products.list"
         products={sorted}
         sortOrder={sortOrder}
         sortField={sortField}

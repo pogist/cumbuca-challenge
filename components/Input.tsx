@@ -1,6 +1,4 @@
-import { useIsFirstRender } from '@hooks';
 import { createStyles, useStyles, useTheme } from '@theming';
-import { isEmpty } from '@util';
 import React from 'react';
 import {
   StyleProp,
@@ -28,6 +26,7 @@ export type TextInputStyle = Omit<
 >;
 
 export interface InputProps extends TextInputProps {
+  testID: string;
   label?: string;
   error?: string;
   style?: StyleProp<TextInputStyle>;
@@ -35,6 +34,7 @@ export interface InputProps extends TextInputProps {
 }
 
 const Input: React.FC<InputProps> = ({
+  testID,
   label,
   error,
   style,
@@ -61,21 +61,22 @@ const Input: React.FC<InputProps> = ({
     textInputStyle.push(styles.numericInput);
   }
 
-  const isFirstRender = useIsFirstRender();
-  if (!isFirstRender && !isEmpty(error)) {
-    textInputStyle.push(styles.erroredTextInput);
-    textLabelStyle.push(styles.erroredTextLabel);
-  }
-
   return (
-    <View style={containerStyle ?? []}>
-      {label && <Text style={textLabelStyle}>{label}</Text>}
+    <View testID={testID} style={containerStyle ?? []}>
+      {label && (
+        <Text testID={`${testID}.label`} style={textLabelStyle}>
+          {label}
+        </Text>
+      )}
       <TextInput
+        testID={`${testID}.text_input`}
         style={textInputStyle}
         placeholderTextColor={theme.secondaryText}
         {...props}
       />
-      <Text style={styles.textError}>{!isFirstRender ? error : ''}</Text>
+      <Text testID={`${testID}.error`} style={styles.textError}>
+        {error}
+      </Text>
     </View>
   );
 };

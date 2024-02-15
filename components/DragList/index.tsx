@@ -34,6 +34,7 @@ export interface DragListRenderItemInfo<T> extends ListRenderItemInfo<T> {
 }
 
 export interface DragListProps<T> extends Omit<FlatListProps<T>, 'renderItem'> {
+  testID: string;
   containerStyle?: StyleProp<ViewStyle>;
   data: T[];
   insets?: Insets;
@@ -46,6 +47,7 @@ export interface DragListProps<T> extends Omit<FlatListProps<T>, 'renderItem'> {
 
 function DragList<T>(props: DragListProps<T>) {
   const {
+    testID,
     containerStyle,
     data,
     insets,
@@ -240,11 +242,13 @@ function DragList<T>(props: DragListProps<T>) {
       pan={pan}
       panIndex={panIndex.current}>
       <View
+        testID={testID}
         ref={wrapRef}
         style={containerStyle}
         {...panResponder.panHandlers}
         onLayout={onDragLayout}>
         <FlatList
+          testID={`${testID}.flat_list`}
           ref={flatRef}
           keyExtractor={keyExtractor}
           data={data}
