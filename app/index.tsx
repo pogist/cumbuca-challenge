@@ -24,32 +24,33 @@ export default function Login() {
   const [lastAccess, setLastAccess] = React.useState<string>();
 
   React.useEffect(() => {
-    loginStorage.get().then((login) => {
+    async function setLastAccessFromStorage() {
+      const login = await loginStorage.get();
       if (!isNullable(login)) {
         setLastAccess(login.lastAccessedAt.toISOString());
       }
-    });
-    settings.getBioAuth().then((enabled) => {
-      if (enabled) {
-        LocalAuthentication.authenticateAsync()
-          .then((result) => {
-            if (result.success) {
-              return loginStorage.get();
-            }
-            return null;
-          })
-          .then((persistedLogin) => {
-            if (!isNullable(persistedLogin)) {
-              loginStorage
-                .set({
-                  ...persistedLogin,
-                  lastAccessedAt: new Date(Date.now()),
-                })
-                .then(() => router.push('/products'));
-            }
-          });
+    }
+    async function handleBioAuth() {
+      const isBioAuthEnabled = await settings.getBioAuthEnabled();
+      if (!isBioAuthEnabled) {
+        return;
       }
-    });
+      const result = await LocalAuthentication.authenticateAsync();
+      if (!result.success) {
+        return;
+      }
+      const storedLogin = await loginStorage.get();
+      if (isNullable(storedLogin)) {
+        return;
+      }
+      await loginStorage.set({
+        ...storedLogin,
+        lastAccessedAt: new Date(Date.now()),
+      });
+      router.push('/products');
+    }
+    setLastAccessFromStorage();
+    handleBioAuth();
   }, []);
 
   const [cpf, setCPF] = React.useState<string>();
@@ -84,8 +85,8 @@ export default function Login() {
   );
 
   const onLogin = async () => {
-    const persistedLogin = await loginStorage.get();
-    if (isNullable(persistedLogin)) {
+    const storedLogin = await loginStorage.get();
+    if (isNullable(storedLogin)) {
       if (cpf && password) {
         await loginStorage.set({
           cpf,
@@ -96,13 +97,17 @@ export default function Login() {
       }
     } else {
       if (cpf && password) {
-        if (cpf !== persistedLogin.cpf) {
-          setCPFLoginError('CPF incorreto');
-        } else if (password !== persistedLogin.password) {
-          setPasswordLoginError('Senha incorreta');
+        const { cpf: storedCPF, password: storedPassword } = storedLogin;
+        if (cpf !== storedCPF || password !== storedPassword) {
+          if (cpf !== storedCPF) {
+            setCPFLoginError('CPF incorreto');
+          }
+          if (password !== storedPassword) {
+            setPasswordLoginError('Senha incorreta');
+          }
         } else {
           await loginStorage.set({
-            ...persistedLogin,
+            ...storedLogin,
             lastAccessedAt: new Date(Date.now()),
           });
           router.push('/products');

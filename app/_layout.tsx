@@ -7,25 +7,17 @@ import { Stack } from 'expo-router';
 import React from 'react';
 import { Appearance, useColorScheme } from 'react-native';
 
-async function loadIcons() {
-  await Font.loadAsync({ ...Octicons.font });
-}
-
 export default function AppLayout() {
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
 
   React.useEffect(() => {
-    loadIcons();
-    LocalAuthentication.isEnrolledAsync().then((isEnrolled) => {
-      settings.setHasBioAuthSupport(isEnrolled);
-    });
-    settings.getDarkTheme().then((isDarkTheme) => {
-      if (isDarkTheme) {
-        Appearance.setColorScheme('dark');
-      } else {
-        Appearance.setColorScheme('light');
-      }
+    Font.loadAsync({ ...Octicons.font }).then();
+    LocalAuthentication.isEnrolledAsync().then((isEnrolled) =>
+      settings.setBioAuthSupported(isEnrolled),
+    );
+    settings.getDarkThemeEnabled().then((isDarkTheme) => {
+      Appearance.setColorScheme(isDarkTheme ? 'dark' : 'light');
     });
   }, []);
 

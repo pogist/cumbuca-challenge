@@ -9,33 +9,33 @@ export default function Settings() {
   const theme = useTheme();
   const styles = useStyles(themedStyles);
 
-  const [darkTheme, setDarkTheme] = React.useState(false);
-  const [bioAuth, setBioAuth] = React.useState(false);
-  const [hasBioAuthSupport, setHasBioAuthSupport] = React.useState(false);
+  const [darkThemeEnabled, setDarkThemeEnabled] = React.useState(false);
+  const [bioAuthEnabled, setBioAuthEnabled] = React.useState(false);
+  const [bioAuthSupported, setBioAuthSupported] = React.useState(false);
 
   useEffect(() => {
-    settings.getDarkTheme().then(setDarkTheme);
-    settings.getBioAuth().then(setBioAuth);
-    settings.hasBioAuthSupport().then(setHasBioAuthSupport);
+    settings.getDarkThemeEnabled().then(setDarkThemeEnabled);
+    settings.getBioAuthEnabled().then(setBioAuthEnabled);
+    settings.getBioAuthSupported().then(setBioAuthSupported);
   }, []);
 
   useEffect(() => {
-    settings.setBioAuth(bioAuth);
-  }, [bioAuth]);
+    settings.setBioAuthEnabled(bioAuthEnabled).then();
+  }, [bioAuthEnabled]);
 
   useEffect(() => {
-    settings.setDarkTheme(darkTheme).then((enabled) => {
+    settings.setDarkThemeEnabled(darkThemeEnabled).then((enabled) => {
       if (enabled) {
         Appearance.setColorScheme('dark');
       } else {
         Appearance.setColorScheme('light');
       }
     });
-  }, [darkTheme]);
+  }, [darkThemeEnabled]);
 
   return (
     <View style={styles.container}>
-      {hasBioAuthSupport && (
+      {bioAuthSupported && (
         <View style={styles.option}>
           <View style={styles.optionInfo}>
             <Text style={styles.optionTitle}>Biometria</Text>
@@ -44,8 +44,8 @@ export default function Settings() {
             </Text>
           </View>
           <Switch
-            value={bioAuth}
-            onValueChange={() => setBioAuth((prev) => !prev)}
+            value={bioAuthEnabled}
+            onValueChange={() => setBioAuthEnabled((prev) => !prev)}
             trueColor={theme.primary}
             falseColor={theme.border}
           />
@@ -62,8 +62,8 @@ export default function Settings() {
           </Text>
         </View>
         <Switch
-          value={darkTheme}
-          onValueChange={() => setDarkTheme((prev) => !prev)}
+          value={darkThemeEnabled}
+          onValueChange={() => setDarkThemeEnabled((prev) => !prev)}
           trueColor={theme.primary}
           falseColor={theme.border}
         />

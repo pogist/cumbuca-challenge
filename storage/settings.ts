@@ -1,95 +1,66 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isNullable } from '@util';
 
-const SETTINGS = '@settings';
+const DARK_THEME_ENABLED = '@dark_theme_enabled';
+const BIO_AUTH_ENABLED = '@bio_auth_enabled';
+const BIO_AUTH_SUPPORTED = '@bio_auth_supported';
 
-export type SettingsObject = {
-  darkTheme: boolean;
-  bioAuth: boolean;
-  hasBioAuthSupport: boolean;
-};
-
-async function set(settings: SettingsObject) {
-  await AsyncStorage.setItem(SETTINGS, JSON.stringify(settings));
+async function setDarkThemeEnabled(enabled: boolean): Promise<boolean> {
+  try {
+    await AsyncStorage.setItem(DARK_THEME_ENABLED, JSON.stringify(enabled));
+    return enabled;
+  } catch (error) {
+    throw error;
+  }
 }
 
-async function get(): Promise<SettingsObject | null> {
-  const value = await AsyncStorage.getItem(SETTINGS);
-  if (isNullable(value)) {
-    return null;
+async function getDarkThemeEnabled(): Promise<boolean> {
+  const current = await AsyncStorage.getItem(DARK_THEME_ENABLED);
+  if (isNullable(current)) {
+    return await setDarkThemeEnabled(false);
   }
-  return JSON.parse(value);
+  return JSON.parse(current) as boolean;
 }
 
-async function setDarkTheme(enabled: boolean): Promise<boolean> {
-  const currentSettings = await get();
-  if (isNullable(currentSettings)) {
-    await set({ darkTheme: enabled, bioAuth: false, hasBioAuthSupport: false });
-  } else {
-    if (currentSettings.darkTheme !== enabled) {
-      await set({ ...currentSettings, darkTheme: enabled });
-    }
+async function setBioAuthEnabled(enabled: boolean): Promise<boolean> {
+  try {
+    await AsyncStorage.setItem(BIO_AUTH_ENABLED, JSON.stringify(enabled));
+    return enabled;
+  } catch (error) {
+    throw error;
   }
-  return enabled;
 }
 
-async function setBioAuth(enabled: boolean): Promise<boolean> {
-  const currentSettings = await get();
-  if (isNullable(currentSettings)) {
-    await set({ darkTheme: false, bioAuth: enabled, hasBioAuthSupport: false });
-  } else {
-    if (currentSettings.bioAuth !== enabled) {
-      await set({ ...currentSettings, bioAuth: enabled });
-    }
+async function getBioAuthEnabled(): Promise<boolean> {
+  const current = await AsyncStorage.getItem(BIO_AUTH_ENABLED);
+  if (isNullable(current)) {
+    return await setBioAuthEnabled(false);
   }
-  return enabled;
+  return JSON.parse(current) as boolean;
 }
 
-async function setHasBioAuthSupport(support: boolean): Promise<boolean> {
-  const currentSettings = await get();
-  if (isNullable(currentSettings)) {
-    await set({
-      darkTheme: false,
-      bioAuth: false,
-      hasBioAuthSupport: support,
-    });
-  } else {
-    if (currentSettings.hasBioAuthSupport !== support) {
-      await set({ ...currentSettings, hasBioAuthSupport: support });
-    }
+async function setBioAuthSupported(supported: boolean): Promise<boolean> {
+  try {
+    await AsyncStorage.setItem(BIO_AUTH_SUPPORTED, JSON.stringify(supported));
+    return supported;
+  } catch (error) {
+    throw error;
   }
-  return support;
 }
 
-async function getDarkTheme(): Promise<boolean> {
-  const currentSettings = await get();
-  if (isNullable(currentSettings)) {
-    return false;
+async function getBioAuthSupported(): Promise<boolean> {
+  const current = await AsyncStorage.getItem(BIO_AUTH_SUPPORTED);
+  if (isNullable(current)) {
+    return await setBioAuthSupported(false);
   }
-  return currentSettings.darkTheme;
-}
-
-async function getBioAuth(): Promise<boolean> {
-  const currentSettings = await get();
-  if (isNullable(currentSettings)) {
-    return false;
-  }
-  return currentSettings.bioAuth;
-}
-
-async function hasBioAuthSupport(): Promise<boolean> {
-  const currentSettings = await get();
-  if (isNullable(currentSettings)) {
-    return false;
-  }
-  return currentSettings.hasBioAuthSupport;
+  return JSON.parse(current) as boolean;
 }
 
 export default {
-  getDarkTheme,
-  getBioAuth,
-  hasBioAuthSupport,
-  setDarkTheme,
-  setBioAuth,
-  setHasBioAuthSupport,
+  getBioAuthEnabled,
+  getBioAuthSupported,
+  getDarkThemeEnabled,
+  setBioAuthEnabled,
+  setBioAuthSupported,
+  setDarkThemeEnabled,
 };
