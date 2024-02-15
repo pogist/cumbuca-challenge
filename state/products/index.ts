@@ -1,10 +1,9 @@
-import { Product } from '@types';
 import React from 'react';
 
 import { reducer } from './reducer';
 
-export function useProducts(initial: Product[]) {
-  return React.useReducer(reducer, initial);
+export function useProducts() {
+  return React.useReducer(reducer, []);
 }
 
 export {
@@ -13,4 +12,5 @@ export {
   increaseQuantity,
   remove,
   reorder,
+  setProducts,
 } from './actions';

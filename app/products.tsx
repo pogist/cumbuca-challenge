@@ -9,8 +9,10 @@ import {
   increaseQuantity,
   remove,
   reorder,
+  setProducts,
   useProducts,
 } from '@state/products';
+import productsStorage from '@storage/products';
 import { createStyles, useStyles, useTheme } from '@theming';
 import { Product } from '@types';
 import { isEmpty } from '@util';
@@ -18,21 +20,23 @@ import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-const sampleProducts: Product[] = [
-  {
-    id: 1,
-    name: 'Produto 1',
-    price: 100,
-    quantity: 2,
-    totalPrice: 100 * 2,
-  },
-];
-
 export default function Products() {
   const theme = useTheme();
   const styles = useStyles(themedStyles);
   const router = useRouter();
   const headerHeight = useHeaderHeight();
+
+  const [products, dispatch] = useProducts();
+
+  React.useEffect(() => {
+    productsStorage.get().then((persistedProducts) => {
+      dispatch(setProducts(persistedProducts));
+    });
+  }, []);
+
+  React.useEffect(() => {
+    productsStorage.set(products);
+  }, [products]);
 
   const [name, price, quantity, disabled] = useProductForm();
 
@@ -41,8 +45,6 @@ export default function Products() {
   const [sortField, setSortField] = useState<keyof Product | undefined>(
     undefined,
   );
-
-  const [products, dispatch] = useProducts(sampleProducts);
 
   const filtered = useFilter(products, 'name', searchTerm);
   const sorted = useSort(filtered, sortOrder, sortField);

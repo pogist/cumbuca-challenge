@@ -6,10 +6,15 @@ import {
   INCREASE_QUANTITY,
   REMOVE,
   REORDER,
+  SET_PRODUCTS,
   type Action,
 } from './actions';
 
 export function reducer(state: Product[], action: Action): Product[] {
+  if (action.type === SET_PRODUCTS) {
+    const { products } = action.payload as { products: Product[] };
+    return products;
+  }
   if (action.type === ADD) {
     const { name, priceText, quantityText } = action.payload as {
       name: string;

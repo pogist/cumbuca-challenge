@@ -10,6 +10,7 @@ export const DECREASE_QUANTITY = 'DECREASE_QUANTITY';
 export const INCREASE_QUANTITY = 'INCREASE_QUANTITY';
 export const REMOVE = 'REMOVE';
 export const REORDER = 'REORDER';
+export const SET_PRODUCTS = 'SET_PRODUCTS';
 
 export function add(
   name: string,
@@ -47,5 +48,12 @@ export function decreaseQuantity(id: Product['id']): Action {
   return {
     type: DECREASE_QUANTITY,
     payload: { id },
+  };
+}
+
+export function setProducts(products: Product[]): Action {
+  return {
+    type: SET_PRODUCTS,
+    payload: { products },
   };
 }
