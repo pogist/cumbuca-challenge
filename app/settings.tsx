@@ -1,8 +1,9 @@
 import Icon from '@components/Icon';
 import Switch from '@components/Switch';
+import settings from '@storage/settings';
 import { createStyles, useStyles, useTheme } from '@theming';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Appearance, StyleSheet, Text, View } from 'react-native';
 
 export default function Settings() {
   const theme = useTheme();
@@ -10,6 +11,25 @@ export default function Settings() {
 
   const [bioAuth, setBioAuth] = React.useState(false);
   const [darkTheme, setDarkTheme] = React.useState(false);
+
+  useEffect(() => {
+    settings.getBioAuth().then(setBioAuth);
+    settings.getDarkTheme().then(setDarkTheme);
+  }, []);
+
+  useEffect(() => {
+    settings.setBioAuth(bioAuth);
+  }, [bioAuth]);
+
+  useEffect(() => {
+    settings.setDarkTheme(darkTheme).then((enabled) => {
+      if (enabled) {
+        Appearance.setColorScheme('dark');
+      } else {
+        Appearance.setColorScheme('light');
+      }
+    });
+  }, [darkTheme]);
 
   return (
     <View style={styles.container}>

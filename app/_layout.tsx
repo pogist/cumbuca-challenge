@@ -1,16 +1,28 @@
 import { Octicons } from '@expo/vector-icons';
+import settings from '@storage/settings';
 import { ThemeProvider, darkTheme, lightTheme } from '@theming';
 import * as Font from 'expo-font';
 import { Stack } from 'expo-router';
 import React from 'react';
-import { useColorScheme } from 'react-native';
+import { Appearance, useColorScheme } from 'react-native';
+
+async function loadIcons() {
+  await Font.loadAsync({ ...Octicons.font });
+}
 
 export default function AppLayout() {
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
 
   React.useEffect(() => {
-    (async () => await Font.loadAsync({ ...Octicons.font }))();
+    loadIcons();
+    settings.getDarkTheme().then((isDarkTheme) => {
+      if (isDarkTheme) {
+        Appearance.setColorScheme('dark');
+      } else {
+        Appearance.setColorScheme('light');
+      }
+    });
   }, []);
 
   return (

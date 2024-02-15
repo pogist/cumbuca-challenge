@@ -17,6 +17,9 @@
       "@state/*": [
         "state/*"
       ],
+      "@storage/*": [
+        "storage/*"
+      ],
       "@theming": [
         "theming/index"
       ],
