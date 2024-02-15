@@ -2,7 +2,7 @@ import Button from '@components/Button';
 import Input from '@components/Input';
 import { useValidation } from '@hooks';
 import { createStyles, useStyles } from '@theming';
-import { isCPF } from '@util';
+import { isCPF, compose, replace } from '@util';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -35,6 +35,17 @@ export default function Login() {
     },
   ]);
 
+  const setMaskedCPF = React.useCallback(
+    compose<string, void>(
+      setCPF,
+      replace(/(\d{3})(\d{1,2})$/, '$1-$2'),
+      replace(/(\d{3})(\d)/, '$1.$2'),
+      replace(/(\d{3})(\d)/, '$1.$2'),
+      replace(/\D/g, ''),
+    ),
+    [],
+  );
+
   const onLogin = () => {
     console.log({ cpf, password });
     router.navigate('/products');
@@ -53,11 +64,11 @@ export default function Login() {
           <Input
             value={cpf}
             error={cpfError}
-            onChangeText={setCPF}
+            onChangeText={setMaskedCPF}
             label="CPF"
-            placeholder="Ex.: 000.000.000-00"
+            placeholder="000.000.000-00"
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-            maxLength={11}
+            maxLength={14}
           />
           <Input
             value={password}

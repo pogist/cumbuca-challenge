@@ -1,11 +1,12 @@
 const CPF_LENGTH = 11;
 
 export function isCPF(text: string): boolean {
-  if (text.length !== CPF_LENGTH) {
+  const cpf = text.replaceAll(/\D/g, '');
+  if (cpf.length !== CPF_LENGTH) {
     return false;
   }
 
-  const digits = text.split('').map((digit) => +digit);
+  const digits = cpf.split('').map((digit) => +digit);
 
   const d1 = makeDigit(10, digits.slice(0, 9));
   if (d1 !== digits[CPF_LENGTH - 2]) {
