@@ -4682,6 +4682,7 @@ __metadata:
     expo-constants: "npm:~15.4.5"
     expo-dev-client: "npm:~3.3.8"
     expo-linking: "npm:~6.2.2"
+    expo-local-authentication: "npm:~13.8.0"
     expo-router: "npm:~3.4.7"
     expo-status-bar: "npm:~1.11.1"
     expo-system-ui: "npm:~2.9.3"
@@ -5700,6 +5701,17 @@ __metadata:
     expo-constants: "npm:~15.4.3"
     invariant: "npm:^2.2.4"
   checksum: 10c0/fcbac8ba0471e676682ee5e83fe977faf9a4430cf208654bf76a747b641a5d40cbacf86ab3898d47953cc3338446e6c7f11c3fc94284b6eeab1202fd59ddccf6
+  languageName: node
+  linkType: hard
+
+"expo-local-authentication@npm:~13.8.0":
+  version: 13.8.0
+  resolution: "expo-local-authentication@npm:13.8.0"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/d4ad5d8efceed439fe8cacdc93a00755f6dde28b19318683ab710a5be2dbe5dc639902f5a59a1eb092fc73b791d233839a8a37e658666052c36de531a2eb70d0
   languageName: node
   linkType: hard
 
